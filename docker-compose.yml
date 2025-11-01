@@ -1,0 +1,51 @@
+version: '3.9' # Define a versão do Docker Compose
+
+services:
+  # Serviço 1: Banco de Dados PostgreSQL
+  db:
+    image: postgres:15-alpine # Imagem oficial do Postgres (versão 15, leve)
+    container_name: postgres-db
+    environment:
+      POSTGRES_USER: postgres # ❗ Altere para seu usuário
+      POSTGRES_PASSWORD: postgres # ❗ Altere para sua senha
+      POSTGRES_DB: postgres # ❗ Altere para o nome do seu banco
+    volumes:
+      - postgres-data:/var/lib/postgresql/data # Volume para persistir os dados
+    ports:
+      - "5432:5432" # Expõe a porta do Postgres para o host (opcional, bom para debug)
+    healthcheck:
+      # Testa se o banco está pronto para aceitar conexões
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - mynet # Adiciona o serviço a uma rede customizada
+
+  # Serviço 2: Aplicação Java 17
+  app:
+    build: . # Constrói a imagem a partir do Dockerfile no diretório atual
+    container_name: app
+    ports:
+      - "8080:8080" # Expõe a porta 8080 da aplicação (ajuste se sua app usar outra)
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/postgres
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    depends_on:
+      db:
+        condition: service_healthy # Garante que a app só inicie APÓS o 'db' estar saudável
+    restart: on-failure
+    networks:
+      - mynet # Adiciona o serviço à mesma rede
+
+# Define os volumes nomeados
+volumes:
+  postgres-data:
+    driver: local
+
+# Define a rede customizada
+networks:
+  mynet:
+    driver: bridge
