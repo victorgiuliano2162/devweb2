@@ -1,18 +1,17 @@
-version: '3.9' # Define a versão do Docker Compose
+version: '3.9'
 
 services:
-  # Serviço 1: Banco de Dados PostgreSQL
   db:
-    image: postgres:15-alpine # Imagem oficial do Postgres (versão 15, leve)
+    image: postgres:16-alpine
     container_name: postgres-db
     environment:
-      POSTGRES_USER: postgres # ❗ Altere para seu usuário
-      POSTGRES_PASSWORD: postgres # ❗ Altere para sua senha
-      POSTGRES_DB: postgres # ❗ Altere para o nome do seu banco
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
     volumes:
-      - postgres-data:/var/lib/postgresql/data # Volume para persistir os dados
+      - postgres-data:/var/lib/postgresql/data 
     ports:
-      - "5432:5432" # Expõe a porta do Postgres para o host (opcional, bom para debug)
+      - "5432:5432" 
     healthcheck:
       # Testa se o banco está pronto para aceitar conexões
       test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
@@ -25,10 +24,10 @@ services:
 
   # Serviço 2: Aplicação Java 17
   app:
-    build: . # Constrói a imagem a partir do Dockerfile no diretório atual
+    build: ./app
     container_name: app
     ports:
-      - "8080:8080" # Expõe a porta 8080 da aplicação (ajuste se sua app usar outra)
+      - "8080:8080" 
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/postgres
       SPRING_DATASOURCE_USERNAME: postgres
