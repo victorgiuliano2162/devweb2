@@ -1,14 +1,12 @@
 package com.docker.app.controllers;
 
-
 import com.docker.app.entities.ChamadoTecnico;
 import com.docker.app.entities.enums.TipoChamado;
 import com.docker.app.services.ChamadoTecnicoService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,57 +19,43 @@ public class ChamadoTecnicoController {
     @Autowired
     private ChamadoTecnicoService chamadoTecnicoService;
 
+
+
     @PostMapping
     public ChamadoTecnico salvarChamadoTecnico(@RequestBody ChamadoTecnico chamadoTecnico) {
         return chamadoTecnicoService.criarChamadoTecnico(chamadoTecnico);
     }
 
     @GetMapping
-    public Page<ChamadoTecnico> getChamadoPorSetor(@RequestParam String setor,
-                                                   @RequestParam(defaultValue = "0") int page,
-                                                   @RequestParam(defaultValue = "20") int limit) {
-        Pageable pageable = PageRequest.of(page, limit);
-        return chamadoTecnicoService.findBySetor(setor, pageable);
-    }
+    public Page<ChamadoTecnico> listarComFiltros(
+            @RequestParam(required = false) String setor,
+            @RequestParam(required = false) String funcId,
+            @RequestParam(required = false) TipoChamado tipoChamado,
+            @RequestParam(required = false) Boolean ativo,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @PageableDefault(page = 0, size = 20) Pageable pageable) {
 
-    @GetMapping
-    public Page<ChamadoTecnico> getChamadoPorQuemAbriu(@RequestParam String funcId,
-                                                   @RequestParam(defaultValue = "0") int page,
-                                                   @RequestParam(defaultValue = "20") int limit) {
-        Pageable pageable = PageRequest.of(page, limit);
-        return chamadoTecnicoService.findByResponsavelPelaAbertura(funcId, pageable);
-    }
+        // Ordem de prioridade de filtros — adapte conforme sua regra de negócio
+        if (tipoChamado != null) {
+            return chamadoTecnicoService.findByTipoChamado(tipoChamado, pageable);
+        }
+        if (setor != null) {
+            return chamadoTecnicoService.findBySetor(setor, pageable);
+        }
+        if (funcId != null && date != null) {
+            return chamadoTecnicoService.findResponsavelPelaAberturaPorData(funcId, date, pageable);
+        }
+        if (funcId != null) {
+            // supondo findByResponsavelPelaAbertura e findByResponsavelPelaExecucao aceitarem funcId
+            return chamadoTecnicoService.findByResponsavelPelaAbertura(funcId, pageable);
+        }
+        if (ativo != null && ativo) {
+            return chamadoTecnicoService.findByAtivoTrue(funcId, pageable);
+        }
+        if (ativo != null && !ativo) {
+            return chamadoTecnicoService.findByAtivoFalse(pageable);
+        }
 
-    @GetMapping
-    public Page<ChamadoTecnico> getByResponsavelPelaExecucao(@RequestParam String funcId,
-                                                             @RequestParam(defaultValue = "0") int page,
-                                                             @RequestParam(defaultValue = "20") int limit) {
-        Pageable pageable = PageRequest.of(page, limit);
-        return chamadoTecnicoService.findByResponsavelPelaExecucao(funcId, pageable);
-    }
-
-    @GetMapping
-    public Page<ChamadoTecnico> getByTipoChamado(@RequestParam TipoChamado tipoChamado,
-                                                             @RequestParam(defaultValue = "0") int page,
-                                                             @RequestParam(defaultValue = "20") int limit) {
-        Pageable pageable = PageRequest.of(page, limit);
-        return chamadoTecnicoService.findByTipoChamado(tipoChamado, pageable);
-    }
-
-    @GetMapping
-    public Page<ChamadoTecnico> getChamadosAtivos(@RequestParam String funcId,
-                                                 @RequestParam(defaultValue = "0") int page,
-                                                 @RequestParam(defaultValue = "20") int limit) {
-        Pageable pageable = PageRequest.of(page, limit);
-        return chamadoTecnicoService.findByAtivoTrue(funcId, pageable);
-    }
-
-    @GetMapping
-    public Page<ChamadoTecnico> getResponsavelPelaAberturaPorData(@RequestParam String funcId,
-                                                                 @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-                                                                 @RequestParam(defaultValue = "0") int page,
-                                                                 @RequestParam(defaultValue = "20") int limit) {
-        Pageable pageable = PageRequest.of(page, limit);
-        return chamadoTecnicoService.findResponsavelPelaAberturaPorData(funcId, date, pageable);
+        return chamadoTecnicoService.findAll(pageable);
     }
 }
