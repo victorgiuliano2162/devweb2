@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @NoArgsConstructor
@@ -29,8 +29,8 @@ public class ChamadoTecnico {
     @Enumerated(EnumType.STRING)
     private TipoChamado tipoChamado;
 
-    private Date dataCriacao;
-    private Date dataAtualizacao;
+    private LocalDate dataCriacao;
+    private LocalDate dataAtualizacao;
     private Boolean ativo;
 
     @ManyToOne(optional = false)
@@ -39,4 +39,24 @@ public class ChamadoTecnico {
     @Lob
     @Column(columnDefinition = "text")
     private String notas;
+
+    public ChamadoTecnico(Funcionario responsavelPelaAbertura,
+                          String contatoDoResponsavelPelaAbertura,
+                          Funcionario responsavelPelaExecucao,
+                          TipoChamado tipoChamado,
+                          LocalDate dataCriacao,
+                          LocalDate dataAtualizacao,
+                          Boolean ativo,
+                          Setor setor,
+                          String notas) {
+        this.responsavelPelaAbertura = responsavelPelaAbertura;
+        this.contatoDoResponsavelPelaAbertura = contatoDoResponsavelPelaAbertura;
+        this.responsavelPelaExecucao = responsavelPelaExecucao;
+        this.tipoChamado = tipoChamado;
+        this.dataCriacao = dataCriacao;
+        this.dataAtualizacao = dataAtualizacao;
+        this.ativo = ativo;
+        this.setor = setor;
+        this.notas = notas;
+    }
 }
