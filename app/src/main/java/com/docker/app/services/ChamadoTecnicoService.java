@@ -72,7 +72,7 @@ public class ChamadoTecnicoService {
         return chamadoTecnicoRepository.findByDataCriacaoAndSetor_Nome(date, setor, pageable);
     }
 
-    public Page<ChamadoTecnico> findResponsavelPelaAberturaPorData(LocalDate date, String funcionarioId, Pageable pageable) {
+    public Page<ChamadoTecnico> findResponsavelPelaAberturaPorData( String funcionarioId, LocalDate date, Pageable pageable) {
         Funcionario funcionario = funcionarioService.getFuncionarioPorId(funcionarioId);
         return chamadoTecnicoRepository.findByDataCriacaoAndResponsavelPelaExecucao(date, funcionario, pageable);
     }
