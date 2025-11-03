@@ -1,6 +1,7 @@
 package com.docker.app.entities;
 
 
+import com.docker.app.entities.enums.Setores;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,10 +20,11 @@ public class Setor {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
-    private String nome;
-    private String endereco;
+    private Setores nome;
 
     @OneToMany
     private List<ChamadoTecnico> chamadosTecnicos = new ArrayList<>();
 
+    @OneToMany
+    private List<Funcionario> funcionarios = new ArrayList<>();
 }
