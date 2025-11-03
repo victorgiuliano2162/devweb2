@@ -16,8 +16,8 @@ public interface ChamadoTecnicoRepository extends JpaRepository<ChamadoTecnico, 
     Page <ChamadoTecnico> findByResponsavelPelaAbertura(Funcionario funcionario, Pageable pageable);
     Page<ChamadoTecnico> findByResponsavelPelaExecucao(Funcionario funcionario, Pageable pageable);
     Page<ChamadoTecnico> findByTipoChamado(TipoChamado tipoChamado, Pageable pageable);
-    Page<ChamadoTecnico> findByAtivoTrueAndByResponsavelPelaExecucao(Funcionario funcionario, Pageable pageable);
-    Page<ChamadoTecnico> findByAtivoTrueAndByResponsavelPelaAbertura(Funcionario funcionario, Pageable pageable);
+    Page<ChamadoTecnico> findByAtivoTrueAndResponsavelPelaExecucao(Funcionario funcionario, Pageable pageable);
+    Page<ChamadoTecnico> findByAtivoTrueAndResponsavelPelaAbertura(Funcionario funcionario, Pageable pageable);
     Page<ChamadoTecnico> findByAtivoFalse(Pageable pageable);
     Page<ChamadoTecnico> findByDataCriacaoBetween(LocalDate dataCriacao, LocalDate dataCriacao2, Pageable pageable);
     Page<ChamadoTecnico> findAllByDataCriacaoBetweenAndAtivoTrue(LocalDate start, LocalDate end, Pageable pageable);
