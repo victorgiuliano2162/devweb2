@@ -13,8 +13,6 @@ public enum StatusChamado {
     RESOLVIDO,
     FINALIZADO,
     CANCELADO,
-    REABERTO,
-    SUSPENSO,
-    FECHADO;
+    SUSPENSO
 }
 
