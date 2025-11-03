@@ -5,6 +5,7 @@ import com.docker.app.entities.Funcionario;
 import com.docker.app.entities.enums.TipoChamado;
 import com.docker.app.repositories.ChamadoTecnicoRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,11 @@ public class ChamadoTecnicoService {
     private ChamadoTecnicoRepository chamadoTecnicoRepository;
     @Autowired
     private FuncionarioService funcionarioService;
+
+    public Page<ChamadoTecnico> findAll(Pageable pageable) {
+        return chamadoTecnicoRepository.findAll(PageRequest.of(0, 10));
+    }
+
 
     public ChamadoTecnico criarChamadoTecnico(ChamadoTecnico chamadoTecnico) {
         return chamadoTecnicoRepository.save(chamadoTecnico);
@@ -44,7 +50,7 @@ public class ChamadoTecnicoService {
 
     public Page<ChamadoTecnico> findByAtivoTrue(String funcionarioId, Pageable pageable) {
         Funcionario funcionario = funcionarioService.getFuncionarioPorId(funcionarioId);
-        return chamadoTecnicoRepository.findByAtivoTrueAndByResponsavelPelaExecucao(funcionario, pageable);
+        return chamadoTecnicoRepository.findByAtivoTrueAndResponsavelPelaExecucao(funcionario, pageable);
     }
 
     public Page<ChamadoTecnico> findByAtivoFalse(Pageable pageable) {
@@ -65,7 +71,7 @@ public class ChamadoTecnicoService {
 
     public Page<ChamadoTecnico> findResponsavelPelaAberturaTrue(String funcionarioId, Pageable pageable) {
         Funcionario funcionario = funcionarioService.getFuncionarioPorId(funcionarioId);
-        return chamadoTecnicoRepository.findByAtivoTrueAndByResponsavelPelaAbertura(funcionario, pageable);
+        return chamadoTecnicoRepository.findByAtivoTrueAndResponsavelPelaAbertura(funcionario, pageable);
     }
 
     public Page<ChamadoTecnico> findResponsavelPelaAberturaTrue(LocalDate date, String setor, Pageable pageable) {
