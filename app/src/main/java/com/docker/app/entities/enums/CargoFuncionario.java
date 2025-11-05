@@ -15,7 +15,6 @@ public enum CargoFuncionario {
     DIRETOR,
     ESTAGIARIO,
     TRAINEE,
-    CONTRATADO,
     TEMPORARIO,
     HORISTA,
     OPERACIONAL,
@@ -24,7 +23,6 @@ public enum CargoFuncionario {
     DESENVOLVIMENTO,
     FINANCEIRO,
     RH,
-    JURIDICO,
-    MULTIFUNCIONAL;
+    JURIDICO;
 }
 
