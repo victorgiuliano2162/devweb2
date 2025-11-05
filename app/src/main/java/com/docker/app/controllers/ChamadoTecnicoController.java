@@ -2,6 +2,7 @@ package com.docker.app.controllers;
 
 import com.docker.app.entities.ChamadoTecnico;
 import com.docker.app.entities.enums.TipoChamado;
+import com.docker.app.repositories.ChamadoTecnicoRepository;
 import com.docker.app.services.ChamadoTecnicoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,7 +21,6 @@ public class ChamadoTecnicoController {
     private ChamadoTecnicoService chamadoTecnicoService;
 
 
-
     @PostMapping
     public ChamadoTecnico salvarChamadoTecnico(@RequestBody ChamadoTecnico chamadoTecnico) {
         return chamadoTecnicoService.criarChamadoTecnico(chamadoTecnico);
@@ -35,7 +35,6 @@ public class ChamadoTecnicoController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             @PageableDefault(page = 0, size = 20) Pageable pageable) {
 
-        // Ordem de prioridade de filtros — adapte conforme sua regra de negócio
         if (tipoChamado != null) {
             return chamadoTecnicoService.findByTipoChamado(tipoChamado, pageable);
         }
@@ -58,4 +57,20 @@ public class ChamadoTecnicoController {
 
         return chamadoTecnicoService.findAll(pageable);
     }
+
+    @DeleteMapping
+    public void deletarChamado(
+            @RequestParam(required = false) String chamadoTecnicoId,
+            @RequestBody(required = false) ChamadoTecnico chamadoTecnico
+    ) {
+        if (chamadoTecnicoId != null) {
+            chamadoTecnicoService.deleteChamadoTecnicoPorId(chamadoTecnicoId);
+        }
+        if (chamadoTecnico != null) {
+            chamadoTecnicoService.deleteChamado(chamadoTecnico);
+        }
+
+        throw new IllegalArgumentException("Informações inválidas");
+    }
+
 }
