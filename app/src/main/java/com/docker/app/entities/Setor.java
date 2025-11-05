@@ -20,11 +20,21 @@ public class Setor {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
+
+    @Enumerated(EnumType.STRING)
     private Setores nome;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<ChamadoTecnico> chamadosTecnicos = new ArrayList<>();
 
     @OneToMany
     private List<Funcionario> funcionarios = new ArrayList<>();
+
+    public void adicionarChamado(ChamadoTecnico chamadoTecnico) {
+        this.chamadosTecnicos.add(chamadoTecnico);
+    }
+
+    public void adicionarFuncionario(Funcionario funcionario) {
+        this.funcionarios.add(funcionario);
+    }
 }

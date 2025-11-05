@@ -26,4 +26,12 @@ public class FuncionarioService {
         funcionario.setSenha(passwordEncoder.encode(funcionario.getSenha()));
         return  funcionarioRepository.save(funcionario);
     }
+
+    public void excluirFuncionario(String id) {
+        funcionarioRepository.deleteById(id);
+    }
+
+    public Funcionario getByEmail(String email) {
+        return funcionarioRepository.findByEmail(email);
+    }
 }
