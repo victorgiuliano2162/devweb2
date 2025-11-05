@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 
@@ -24,19 +25,19 @@ public class Funcionario {
     private String email;
     private String senha;
     private String telefone;
-    private Date dataNascimento;
-    private Date dataContratacao;
+    private LocalDate dataNascimento;
+    private LocalDate dataContratacao;
 
     @Enumerated(EnumType.STRING)
     private CargoFuncionario cargo;
 
-    Funcionario(String nome,
-                String cpf,
-                String email,
-                String senha,
-                CargoFuncionario cargo,
-                Date dataNascimento,
-                Date dataContratacao) {
+    public Funcionario(String nome,
+                       String cpf,
+                       String email,
+                       String senha,
+                       CargoFuncionario cargo,
+                       LocalDate dataNascimento,
+                       LocalDate dataContratacao) {
         this.nome = nome;
         this.cpf = cpf;
         this.email = email;
