@@ -37,4 +37,8 @@ public class Setor {
     public void adicionarFuncionario(Funcionario funcionario) {
         this.funcionarios.add(funcionario);
     }
+
+    public Setor (Setores nome) {
+        this.nome = nome;
+    }
 }
