@@ -2,6 +2,8 @@ package com.docker.app.services;
 
 import com.docker.app.entities.ChamadoTecnico;
 import com.docker.app.entities.Funcionario;
+import com.docker.app.entities.Setor;
+import com.docker.app.entities.enums.Setores;
 import com.docker.app.entities.enums.TipoChamado;
 import com.docker.app.repositories.ChamadoTecnicoRepository;
 import org.springframework.data.domain.Page;
@@ -19,13 +21,24 @@ public class ChamadoTecnicoService {
     private ChamadoTecnicoRepository chamadoTecnicoRepository;
     @Autowired
     private FuncionarioService funcionarioService;
+    @Autowired
+    private SetorService setorService;
 
     public Page<ChamadoTecnico> findAll(Pageable pageable) {
         return chamadoTecnicoRepository.findAll(PageRequest.of(0, 10));
     }
 
-
     public ChamadoTecnico criarChamadoTecnico(ChamadoTecnico chamadoTecnico) {
+        chamadoTecnico.setAtivo(true);
+        chamadoTecnico.setContatoDoResponsavelPelaAbertura(
+                chamadoTecnico.getResponsavelPelaAbertura().getTelefone()
+        );
+
+        Setores nomeSetor = chamadoTecnico.getSetor().getNome();
+        Setor setorPersistente = setorService.findByNome(nomeSetor);
+
+        chamadoTecnico.setSetor(setorPersistente);
+
         return chamadoTecnicoRepository.save(chamadoTecnico);
     }
 
@@ -81,5 +94,13 @@ public class ChamadoTecnicoService {
     public Page<ChamadoTecnico> findResponsavelPelaAberturaPorData( String funcionarioId, LocalDate date, Pageable pageable) {
         Funcionario funcionario = funcionarioService.getFuncionarioPorId(funcionarioId);
         return chamadoTecnicoRepository.findByDataCriacaoAndResponsavelPelaExecucao(date, funcionario, pageable);
+    }
+
+    public void deleteChamado(ChamadoTecnico chamadoTecnico) {
+        chamadoTecnicoRepository.delete(chamadoTecnico);
+    }
+
+    public void deleteChamadoTecnicoPorId(String chamadoId) {
+        chamadoTecnicoRepository.deleteById(chamadoId);
     }
 }
