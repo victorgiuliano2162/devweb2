@@ -16,4 +16,8 @@ public class SetorService {
     public Setor findByNome(Setores nome) {
         return setorRepository.findByNome(nome);
     }
+
+    public Setor save(Setor setor) {
+        return setorRepository.save(setor);
+    }
 }
