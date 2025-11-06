@@ -20,6 +20,10 @@ public class ChamadoTecnicoController {
     @Autowired
     private ChamadoTecnicoService chamadoTecnicoService;
 
+    @PostMapping("/end")
+    public ChamadoTecnico finalizarChamado(@RequestParam String id) {
+        return chamadoTecnicoService.finalizarChamado(id);
+    }
 
     @PostMapping
     public ChamadoTecnico salvarChamadoTecnico(@RequestBody ChamadoTecnico chamadoTecnico) {
