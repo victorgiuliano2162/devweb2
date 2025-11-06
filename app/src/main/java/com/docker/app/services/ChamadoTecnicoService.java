@@ -17,12 +17,17 @@ import java.time.LocalDate;
 @Service
 public class ChamadoTecnicoService {
 
-    @Autowired
-    private ChamadoTecnicoRepository chamadoTecnicoRepository;
-    @Autowired
-    private FuncionarioService funcionarioService;
-    @Autowired
-    private SetorService setorService;
+    private final ChamadoTecnicoRepository chamadoTecnicoRepository;
+    private final FuncionarioService funcionarioService;
+    private final SetorService setorService;
+
+    public ChamadoTecnicoService(ChamadoTecnicoRepository chamadoTecnicoRepository,
+                                 FuncionarioService funcionarioService,
+                                 SetorService setorService) {
+        this.chamadoTecnicoRepository = chamadoTecnicoRepository;
+        this.funcionarioService = funcionarioService;
+        this.setorService = setorService;
+    }
 
     public Page<ChamadoTecnico> findAll(Pageable pageable) {
         return chamadoTecnicoRepository.findAll(PageRequest.of(0, 10));
@@ -31,18 +36,28 @@ public class ChamadoTecnicoService {
     public ChamadoTecnico criarChamadoTecnico(ChamadoTecnico chamadoTecnico) {
         chamadoTecnico.setAtivo(true);
 
-        if (chamadoTecnico.getResponsavelPelaAbertura() != null) {
+        String fId = chamadoTecnico.getResponsavelPelaAbertura().getId();
+        Funcionario f = funcionarioService.getFuncionarioPorId(fId);
+        System.out.println(f.getNome() + " " + f.getEmail() + "!!!!!!!!!!!!!!!!!");
+        if (chamadoTecnico.getResponsavelPelaAbertura() != null
+                && chamadoTecnico.getResponsavelPelaAbertura().getTelefone() != null) {
+
             chamadoTecnico.setContatoDoResponsavelPelaAbertura(
                     chamadoTecnico.getResponsavelPelaAbertura().getTelefone()
             );
+        } else {
+            chamadoTecnico.setContatoDoResponsavelPelaAbertura("");
         }
 
         if (chamadoTecnico.getSetor() != null) {
             Setores nomeSetor = chamadoTecnico.getSetor().getNome();
             Setor setorPersistente = setorService.findByNome(nomeSetor);
             chamadoTecnico.setSetor(setorPersistente);
+        } else {
+            throw new IllegalArgumentException("Setor é obrigatório para criar um chamado técnico");
         }
 
+        chamadoTecnico.setResponsavelPelaAbertura(f);
         chamadoTecnico.setDataCriacao(LocalDate.now());
         chamadoTecnico.setDataAtualizacao(LocalDate.now());
 
