@@ -1,20 +1,21 @@
 package com.docker.app.services;
 
 
-import com.docker.app.configuration.SecurityConfig;
 import com.docker.app.entities.Funcionario;
 import com.docker.app.repositories.FuncionarioRepository;
-import com.docker.app.repositories.SetorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class FuncionarioService {
+    private final FuncionarioRepository funcionarioRepository;
 
-    @Autowired
-    private FuncionarioRepository funcionarioRepository;
-
+    public FuncionarioService(FuncionarioRepository funcionarioRepository) {
+        this.funcionarioRepository = funcionarioRepository;
+    }
     @Autowired
     PasswordEncoder passwordEncoder;
 
@@ -34,4 +35,21 @@ public class FuncionarioService {
     public Funcionario getByEmail(String email) {
         return funcionarioRepository.findByEmail(email);
     }
+
+    public void saveAll(List<Funcionario> funcionarios) {
+        List<Funcionario> funcionariosComSenhaCriptografada = funcionarios.stream()
+                .map(funcionario -> {
+                    funcionario.setSenha(passwordEncoder.encode(funcionario.getSenha()));
+                    return funcionario;
+                })
+                .toList();
+        funcionarioRepository.saveAll(funcionariosComSenhaCriptografada);
+    }
+
+    public List<Funcionario> getAll() {
+        return funcionarioRepository.findAll();
+    }
+
+
+
 }
