@@ -14,7 +14,7 @@ public class FuncionarioSQL {
 
     private final FuncionarioService funcionarioService;
 
-    // Injeção via construtor
+
     public FuncionarioSQL(FuncionarioService funcionarioService) {
         this.funcionarioService = funcionarioService;
     }
@@ -35,8 +35,8 @@ public class FuncionarioSQL {
         Funcionario chico = new Funcionario(
                 "Arthur Vieira Santos",
                 "00000000",
-                "arthur.santos@gmail.com",
-                "amalgama123",
+                "arthursantosvs1211@gmail.com",
+                "chico123",
                 CargoFuncionario.DIRETOR,
                 LocalDate.of(1998, 3, 19),
                 LocalDate.of(2013, 11, 25)
