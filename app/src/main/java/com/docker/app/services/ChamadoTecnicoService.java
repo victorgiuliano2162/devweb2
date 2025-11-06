@@ -9,10 +9,10 @@ import com.docker.app.repositories.ChamadoTecnicoRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Service
 public class ChamadoTecnicoService {
@@ -58,8 +58,8 @@ public class ChamadoTecnicoService {
         }
 
         chamadoTecnico.setResponsavelPelaAbertura(f);
-        chamadoTecnico.setDataCriacao(LocalDate.now());
-        chamadoTecnico.setDataAtualizacao(LocalDate.now());
+        chamadoTecnico.setDataCriacao(LocalDateTime.now());
+        chamadoTecnico.setDataAtualizacao(LocalDateTime.now());
 
         return chamadoTecnicoRepository.save(chamadoTecnico);
     }
@@ -125,5 +125,11 @@ public class ChamadoTecnicoService {
 
     public void deleteChamadoTecnicoPorId(String chamadoId) {
         chamadoTecnicoRepository.deleteById(chamadoId);
+    }
+
+    public ChamadoTecnico finalizarChamado(String id) {
+        ChamadoTecnico ct = chamadoTecnicoRepository.findById(id).get();
+        ct.setAtivo(false);
+        return chamadoTecnicoRepository.save(ct);
     }
 }
