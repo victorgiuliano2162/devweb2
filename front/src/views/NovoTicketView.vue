@@ -78,6 +78,12 @@
       <div v-if="showDebug" class="debug-panel">
         <h3>🔍 Debug - JSON que será enviado:</h3>
         <pre>{{ debugJSON }}</pre>
+        <div v-if="authStore.user" style="margin-top: 10px; padding: 10px; background: #e3f2fd; border-radius: 4px;">
+          <strong>👤 Usuário Logado:</strong><br>
+          ID: {{ authStore.user.id }}<br>
+          Nome: {{ authStore.user.nome }}<br>
+          Email: {{ authStore.user.email }}
+        </div>
       </div>
     </div>
   </div>
@@ -104,7 +110,6 @@ const novoTicket = ref({
   tipoChamado: '',
   contatoDoResponsavelPelaAbertura: '',
   notas: '',
-  ativo: true,
 });
 
 const enums = computed(() => ticketStore.enums);
@@ -115,13 +120,19 @@ const debugJSON = computed(() => {
     return 'Preencha o formulário para ver o JSON...';
   }
 
+  if (!authStore.user?.id) {
+    return 'Erro: Usuário não está logado ou ID não disponível';
+  }
+
   const ticketData = {
+    responsavelPelaAbertura: {
+      id: authStore.user.id
+    },
     tipoChamado: novoTicket.value.tipoChamado,
-    contatoDoResponsavelPelaAbertura: novoTicket.value.contatoDoResponsavelPelaAbertura,
-    notas: novoTicket.value.notas,
     setor: {
       nome: setorSelecionado.value
-    }
+    },
+    notas: novoTicket.value.notas
   };
 
   return JSON.stringify(ticketData, null, 2);
@@ -136,6 +147,12 @@ onMounted(async () => {
   if (authStore.user?.telefone) {
     novoTicket.value.contatoDoResponsavelPelaAbertura = authStore.user.telefone;
   }
+
+  // Verifica se o usuário está logado
+  if (!authStore.user?.id) {
+    error.value = 'Erro: Usuário não está logado. Faça login novamente.';
+    console.error('❌ Usuário não autenticado');
+  }
 });
 
 const formatarEnum = (valor) => {
@@ -147,6 +164,12 @@ const formatarEnum = (valor) => {
 };
 
 const criarTicket = async () => {
+  // Validação: verifica se o usuário está logado
+  if (!authStore.user?.id) {
+    error.value = 'Erro: Usuário não está logado. Faça login novamente.';
+    return;
+  }
+
   loading.value = true;
   error.value = '';
   errorDetails.value = '';
@@ -154,12 +177,14 @@ const criarTicket = async () => {
 
   try {
     const ticketData = {
+      responsavelPelaAbertura: {
+        id: authStore.user.id
+      },
       tipoChamado: novoTicket.value.tipoChamado,
-      contatoDoResponsavelPelaAbertura: novoTicket.value.contatoDoResponsavelPelaAbertura,
-      notas: novoTicket.value.notas,
       setor: {
         nome: setorSelecionado.value
-      }
+      },
+      notas: novoTicket.value.notas
     };
 
     console.log('📤 JSON que será enviado:');
