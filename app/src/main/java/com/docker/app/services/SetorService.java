@@ -10,8 +10,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class SetorService {
 
-    @Autowired
-    private SetorRepository setorRepository;
+    private final SetorRepository setorRepository;
+
+    public SetorService(SetorRepository setorRepository) {
+        this.setorRepository = setorRepository;
+    }
 
     public Setor findByNome(Setores nome) {
         return setorRepository.findByNome(nome);
