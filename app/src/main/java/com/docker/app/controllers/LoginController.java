@@ -31,16 +31,15 @@ public class LoginController {
     @PostMapping
     public ResponseEntity<?> login(@RequestBody Funcionario funcionario) {
         Funcionario funcionarioResposta = funcionarioService.getByEmail(funcionario.getEmail());
-        if (funcionario == null) {
+
+        if (funcionarioResposta == null ||
+                !passwordEncoder.matches(funcionario.getSenha(), funcionarioResposta.getSenha())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciais inválidas");
         }
 
-        if (!passwordEncoder.matches(funcionario.getSenha(), funcionario.getSenha())) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciais inválidas");
-        }
-
-        return ResponseEntity.ok(funcionario);
+        return ResponseEntity.ok(funcionarioResposta);
     }
+
 
 }
 
