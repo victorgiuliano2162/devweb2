@@ -1,10 +1,13 @@
 package com.docker.app.controllers;
 
 
+import com.docker.app.entities.Setor;
 import com.docker.app.entities.enums.Setores;
 import com.docker.app.entities.enums.StatusChamado;
 import com.docker.app.entities.enums.TipoChamado;
 import com.docker.app.entities.enums.CargoFuncionario;
+import com.docker.app.services.SetorService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +21,9 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("api/enums")
 public class EnumsController {
+
+    @Autowired
+    private SetorService setorService;
 
     @GetMapping
     public Map<String, List<String>> getEnums() {
@@ -39,5 +45,10 @@ public class EnumsController {
                 .map(Enum::name)
                 .collect(Collectors.toList()));
         return enumsListados;
+    }
+
+    @GetMapping("/setores")
+    public List<Setor> getSetores() {
+        return setorService.findAll();
     }
 }

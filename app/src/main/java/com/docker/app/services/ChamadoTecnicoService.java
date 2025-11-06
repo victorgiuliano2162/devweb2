@@ -30,17 +30,25 @@ public class ChamadoTecnicoService {
 
     public ChamadoTecnico criarChamadoTecnico(ChamadoTecnico chamadoTecnico) {
         chamadoTecnico.setAtivo(true);
-        chamadoTecnico.setContatoDoResponsavelPelaAbertura(
-                chamadoTecnico.getResponsavelPelaAbertura().getTelefone()
-        );
 
-        Setores nomeSetor = chamadoTecnico.getSetor().getNome();
-        Setor setorPersistente = setorService.findByNome(nomeSetor);
+        if (chamadoTecnico.getResponsavelPelaAbertura() != null) {
+            chamadoTecnico.setContatoDoResponsavelPelaAbertura(
+                    chamadoTecnico.getResponsavelPelaAbertura().getTelefone()
+            );
+        }
 
-        chamadoTecnico.setSetor(setorPersistente);
+        if (chamadoTecnico.getSetor() != null) {
+            Setores nomeSetor = chamadoTecnico.getSetor().getNome();
+            Setor setorPersistente = setorService.findByNome(nomeSetor);
+            chamadoTecnico.setSetor(setorPersistente);
+        }
+
+        chamadoTecnico.setDataCriacao(LocalDate.now());
+        chamadoTecnico.setDataAtualizacao(LocalDate.now());
 
         return chamadoTecnicoRepository.save(chamadoTecnico);
     }
+
 
     public Page<ChamadoTecnico> findBySetor(String setor, Pageable pageable) {
         return chamadoTecnicoRepository.findBySetor_Nome(setor.toUpperCase(), pageable);
