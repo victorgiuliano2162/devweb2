@@ -7,6 +7,8 @@ import com.docker.app.repositories.SetorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class SetorService {
 
@@ -22,5 +24,9 @@ public class SetorService {
 
     public Setor save(Setor setor) {
         return setorRepository.save(setor);
+    }
+
+    public List<Setor> findAll() {
+        return setorRepository.findAll();
     }
 }
