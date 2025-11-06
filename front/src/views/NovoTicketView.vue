@@ -66,13 +66,19 @@
 
         <div v-if="error" class="error-message">
           {{ error }}
-          <pre v-if="errorDetails" style="margin-top: 10px; font-size: 12px;">{{ errorDetails }}</pre>
+          <pre v-if="errorDetails" style="margin-top: 10px; font-size: 12px; overflow-x: auto;">{{ errorDetails }}</pre>
         </div>
 
         <div v-if="success" class="success-message">
           Ticket criado com sucesso!
         </div>
       </form>
+
+      <!-- Debug Panel -->
+      <div v-if="showDebug" class="debug-panel">
+        <h3>🔍 Debug - JSON que será enviado:</h3>
+        <pre>{{ debugJSON }}</pre>
+      </div>
     </div>
   </div>
 </template>
@@ -92,21 +98,43 @@ const loading = ref(false);
 const error = ref('');
 const errorDetails = ref('');
 const success = ref(false);
+const showDebug = ref(true); // Mostra painel de debug
 
 const novoTicket = ref({
   tipoChamado: '',
   contatoDoResponsavelPelaAbertura: '',
   notas: '',
   ativo: true,
-  dataCriacao: new Date().toISOString().split('T')[0],
-  dataAtualizacao: new Date().toISOString().split('T')[0]
 });
 
 const enums = computed(() => ticketStore.enums);
 
+// JSON formatado para debug
+const debugJSON = computed(() => {
+  if (!novoTicket.value.tipoChamado || !setorSelecionado.value) {
+    return 'Preencha o formulário para ver o JSON...';
+  }
+
+  const ticketData = {
+    tipoChamado: novoTicket.value.tipoChamado,
+    contatoDoResponsavelPelaAbertura: novoTicket.value.contatoDoResponsavelPelaAbertura,
+    notas: novoTicket.value.notas,
+    setor: {
+      nome: setorSelecionado.value
+    }
+  };
+
+  return JSON.stringify(ticketData, null, 2);
+});
+
 onMounted(async () => {
   if (ticketStore.enums.setores.length === 0) {
     await ticketStore.carregarEnums();
+  }
+
+  // Preenche o contato com o telefone do usuário logado (se existir)
+  if (authStore.user?.telefone) {
+    novoTicket.value.contatoDoResponsavelPelaAbertura = authStore.user.telefone;
   }
 });
 
@@ -125,23 +153,18 @@ const criarTicket = async () => {
   success.value = false;
 
   try {
-    // Estrutura correta conforme o backend espera
     const ticketData = {
       tipoChamado: novoTicket.value.tipoChamado,
       contatoDoResponsavelPelaAbertura: novoTicket.value.contatoDoResponsavelPelaAbertura,
       notas: novoTicket.value.notas,
-      ativo: true,
-      dataCriacao: novoTicket.value.dataCriacao,
-      dataAtualizacao: novoTicket.value.dataAtualizacao,
       setor: {
         nome: setorSelecionado.value
-      },
-      // Campos opcionais - o backend aceita null
-      responsavelPelaAbertura: null,
-      responsavelPelaExecucao: null
+      }
     };
 
-    console.log('📤 Enviando dados:', ticketData);
+    console.log('📤 JSON que será enviado:');
+    console.log(JSON.stringify(ticketData, null, 2));
+    console.log('📤 Objeto JavaScript:', ticketData);
 
     await ticketStore.criarTicket(ticketData);
     success.value = true;
@@ -154,8 +177,15 @@ const criarTicket = async () => {
     error.value = 'Erro ao criar ticket. Verifique os dados e tente novamente.';
 
     if (err.response) {
-      errorDetails.value = `Status: ${err.response.status}\nMensagem: ${JSON.stringify(err.response.data, null, 2)}`;
-      console.error('Detalhes do erro:', err.response.data);
+      errorDetails.value = `Status: ${err.response.status}\n\nResposta do servidor:\n${JSON.stringify(err.response.data, null, 2)}\n\nHeaders:\n${JSON.stringify(err.response.headers, null, 2)}`;
+      console.error('📋 Status:', err.response.status);
+      console.error('📋 Dados:', err.response.data);
+      console.error('📋 Headers:', err.response.headers);
+    } else if (err.request) {
+      errorDetails.value = 'Nenhuma resposta do servidor. Verifique se o backend está rodando.';
+      console.error('📋 Request:', err.request);
+    } else {
+      errorDetails.value = err.message;
     }
   } finally {
     loading.value = false;
@@ -315,6 +345,32 @@ const voltar = () => {
   font-size: 14px;
   text-align: center;
   border-left: 4px solid #10b981;
+}
+
+.debug-panel {
+  margin-top: 32px;
+  padding: 20px;
+  background: #f8f9fa;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+}
+
+.debug-panel h3 {
+  margin: 0 0 12px 0;
+  color: #333;
+  font-size: 16px;
+}
+
+.debug-panel pre {
+  margin: 0;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #2d3748;
 }
 
 @media (max-width: 768px) {
