@@ -2,15 +2,16 @@ package com.docker.app.repositories;
 
 import com.docker.app.entities.ChamadoTecnico;
 import com.docker.app.entities.Funcionario;
-import com.docker.app.entities.Setor;
 import com.docker.app.entities.enums.TipoChamado;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Repository;
 
 
 import java.time.LocalDate;
 
+@Repository
 public interface ChamadoTecnicoRepository extends JpaRepository<ChamadoTecnico, String> {
     Page<ChamadoTecnico> findBySetor_Nome(String setor, Pageable pageable);
     Page <ChamadoTecnico> findByResponsavelPelaAbertura(Funcionario funcionario, Pageable pageable);
