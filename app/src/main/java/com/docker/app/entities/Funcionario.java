@@ -35,6 +35,24 @@ public class Funcionario {
                        String cpf,
                        String email,
                        String senha,
+                       String telefone,
+                       CargoFuncionario cargo,
+                       LocalDate dataNascimento,
+                       LocalDate dataContratacao) {
+        this.nome = nome;
+        this.cpf = cpf;
+        this.email = email;
+        this.senha = senha;
+        this.cargo = cargo;
+        this.telefone = telefone;
+        this.dataNascimento = dataNascimento;
+        this.dataContratacao = dataContratacao;
+    }
+
+    public Funcionario(String nome,
+                       String cpf,
+                       String email,
+                       String senha,
                        CargoFuncionario cargo,
                        LocalDate dataNascimento,
                        LocalDate dataContratacao) {
