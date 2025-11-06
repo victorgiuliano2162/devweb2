@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 
 @RestController
-@RequestMapping("/api/tickets")
+@RequestMapping("api/tickets")
 public class ChamadoTecnicoController {
 
     @Autowired
