@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor
@@ -29,8 +30,8 @@ public class ChamadoTecnico {
     @Enumerated(EnumType.STRING)
     private TipoChamado tipoChamado;
 
-    private LocalDate dataCriacao;
-    private LocalDate dataAtualizacao;
+    private LocalDateTime dataCriacao;
+    private LocalDateTime dataAtualizacao;
     private Boolean ativo;
 
     @ManyToOne(optional = false)
@@ -44,8 +45,8 @@ public class ChamadoTecnico {
                           String contatoDoResponsavelPelaAbertura,
                           Funcionario responsavelPelaExecucao,
                           TipoChamado tipoChamado,
-                          LocalDate dataCriacao,
-                          LocalDate dataAtualizacao,
+                          LocalDateTime dataCriacao,
+                          LocalDateTime dataAtualizacao,
                           Boolean ativo,
                           Setor setor,
                           String notas) {
