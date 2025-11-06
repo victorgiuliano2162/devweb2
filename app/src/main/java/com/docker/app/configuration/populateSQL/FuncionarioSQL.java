@@ -3,19 +3,45 @@ package com.docker.app.configuration.populateSQL;
 import com.docker.app.entities.Funcionario;
 import com.docker.app.entities.enums.CargoFuncionario;
 import com.docker.app.services.FuncionarioService;
-import java.time.LocalDate;
+import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
+
+@Component
 public class FuncionarioSQL {
 
     private final FuncionarioService funcionarioService;
 
-    public FuncionarioSQL (FuncionarioService funcionarioService) {
+    // Injeção via construtor
+    public FuncionarioSQL(FuncionarioService funcionarioService) {
         this.funcionarioService = funcionarioService;
     }
 
     public void createFuncionarios() {
 
-// ADMINISTRATIVO
+        Funcionario victor = new Funcionario(
+                "Victor Giuliano de Freitas Silva",
+                "08272635461",
+                "vitor.giuliano@gmail.com",
+                "153769ab",
+                "81988860171",
+                CargoFuncionario.DIRETOR,
+                LocalDate.of(1998, 3, 19),
+                LocalDate.of(2013, 11, 25)
+        );
+
+        Funcionario chico = new Funcionario(
+                "Arthur Vieira Santos",
+                "00000000",
+                "arthur.santos@gmail.com",
+                "amalgama123",
+                CargoFuncionario.DIRETOR,
+                LocalDate.of(1998, 3, 19),
+                LocalDate.of(2013, 11, 25)
+        );
+
         Funcionario fAdmin1 = new Funcionario(
                 "Carlos Alberto",
                 "52998224725",
@@ -36,13 +62,12 @@ public class FuncionarioSQL {
                 LocalDate.of(2019, 4, 15)
         );
 
-// TECNICO
         Funcionario fTecnico1 = new Funcionario(
                 "Paulo Henrique",
                 "11144477735",
                 "paulo.henrique@empresa.com",
                 "senha123",
-                CargoFuncionario.TECNICO,
+                CargoFuncionario.COMERCIAL,
                 LocalDate.of(1992, 8, 5),
                 LocalDate.of(2020, 9, 1)
         );
@@ -52,12 +77,11 @@ public class FuncionarioSQL {
                 "52998224725",
                 "ana.clara@empresa.com",
                 "senha123",
-                CargoFuncionario.TECNICO,
+                CargoFuncionario.ADMINISTRATIVO,
                 LocalDate.of(1998, 11, 12),
                 LocalDate.of(2022, 3, 10)
         );
 
-// TECNICO_JUNIOR
         Funcionario fTecJunior1 = new Funcionario(
                 "Lucas Pereira",
                 "12345678909",
@@ -78,7 +102,6 @@ public class FuncionarioSQL {
                 LocalDate.of(2021, 8, 20)
         );
 
-// TECNICO_PLENO
         Funcionario fTecPleno1 = new Funcionario(
                 "Rafael Gomes",
                 "52998224725",
@@ -99,7 +122,6 @@ public class FuncionarioSQL {
                 LocalDate.of(2016, 5, 3)
         );
 
-// TECNICO_SENIOR
         Funcionario fTecSenior1 = new Funcionario(
                 "Fernando Castro",
                 "11144477735",
@@ -120,7 +142,6 @@ public class FuncionarioSQL {
                 LocalDate.of(2012, 12, 7)
         );
 
-// ANALISTA
         Funcionario fAnalista1 = new Funcionario(
                 "Diego Fernandes",
                 "12345678909",
@@ -141,7 +162,6 @@ public class FuncionarioSQL {
                 LocalDate.of(2020, 4, 18)
         );
 
-// ANALISTA_SENIOR
         Funcionario fAnalistaSenior1 = new Funcionario(
                 "Roberto Silva",
                 "52998224725",
@@ -162,13 +182,12 @@ public class FuncionarioSQL {
                 LocalDate.of(2015, 9, 25)
         );
 
-// COORDENADOR
         Funcionario fCoordenador1 = new Funcionario(
                 "Marcos Vinicius",
                 "11144477735",
                 "marcos.vinicius@empresa.com",
                 "senha123",
-                CargoFuncionario.COORDENADOR,
+                CargoFuncionario.SUPERVISOR,
                 LocalDate.of(1983, 8, 11),
                 LocalDate.of(2013, 10, 3)
         );
@@ -178,12 +197,11 @@ public class FuncionarioSQL {
                 "52998224725",
                 "sofia.ribeiro@empresa.com",
                 "senha123",
-                CargoFuncionario.COORDENADOR,
+                CargoFuncionario.TECNICO_JUNIOR,
                 LocalDate.of(1987, 11, 29),
                 LocalDate.of(2016, 3, 14)
         );
 
-// SUPERVISOR
         Funcionario fSupervisor1 = new Funcionario(
                 "André Moraes",
                 "12345678909",
@@ -204,7 +222,6 @@ public class FuncionarioSQL {
                 LocalDate.of(2017, 6, 20)
         );
 
-// GESTOR
         Funcionario fGestor1 = new Funcionario(
                 "Claudio Ramos",
                 "52998224725",
@@ -225,13 +242,12 @@ public class FuncionarioSQL {
                 LocalDate.of(2012, 11, 10)
         );
 
-// GERENTE
         Funcionario fGerente1 = new Funcionario(
                 "Victor Almeida",
                 "11144477735",
                 "victor.almeida@empresa.com",
                 "senha123",
-                CargoFuncionario.GERENTE,
+                CargoFuncionario.RH,
                 LocalDate.of(1978, 6, 21),
                 LocalDate.of(2008, 5, 4)
         );
@@ -241,7 +257,7 @@ public class FuncionarioSQL {
                 "52998224725",
                 "adriana.lopes@empresa.com",
                 "senha123",
-                CargoFuncionario.GERENTE,
+                CargoFuncionario.COMERCIAL,
                 LocalDate.of(1976, 2, 13),
                 LocalDate.of(2006, 10, 30)
         );
@@ -267,7 +283,6 @@ public class FuncionarioSQL {
                 LocalDate.of(2001, 7, 12)
         );
 
-// ESTAGIARIO
         Funcionario fEstagiario1 = new Funcionario(
                 "Bruno Teixeira",
                 "52998224725",
@@ -288,13 +303,12 @@ public class FuncionarioSQL {
                 LocalDate.of(2024, 7, 1)
         );
 
-// TRAINEE
         Funcionario fTrainee1 = new Funcionario(
                 "Igor Santana",
                 "11144477735",
                 "igor.santana@empresa.com",
                 "senha123",
-                CargoFuncionario.TRAINEE,
+                CargoFuncionario.TECNICO_JUNIOR,
                 LocalDate.of(1998, 5, 14),
                 LocalDate.of(2023, 4, 10)
         );
@@ -304,18 +318,17 @@ public class FuncionarioSQL {
                 "52998224725",
                 "paula.ramos@empresa.com",
                 "senha123",
-                CargoFuncionario.TRAINEE,
+                CargoFuncionario.TECNICO_JUNIOR,
                 LocalDate.of(1999, 8, 9),
                 LocalDate.of(2022, 10, 20)
         );
 
-// TEMPORARIO
         Funcionario fTemporario1 = new Funcionario(
                 "Mauro Silveira",
                 "12345678909",
                 "mauro.silveira@empresa.com",
                 "senha123",
-                CargoFuncionario.TEMPORARIO,
+                CargoFuncionario.TECNICO_PLENO,
                 LocalDate.of(1995, 11, 25),
                 LocalDate.of(2024, 3, 1)
         );
@@ -325,18 +338,17 @@ public class FuncionarioSQL {
                 "11144477735",
                 "rita.carvalho@empresa.com",
                 "senha123",
-                CargoFuncionario.TEMPORARIO,
+                CargoFuncionario.TECNICO_SENIOR,
                 LocalDate.of(1994, 2, 6),
                 LocalDate.of(2024, 6, 12)
         );
 
-// HORISTA
         Funcionario fHorista1 = new Funcionario(
                 "Elias Moreira",
                 "52998224725",
                 "elias.moreira@empresa.com",
                 "senha123",
-                CargoFuncionario.HORISTA,
+                CargoFuncionario.RH,
                 LocalDate.of(1990, 4, 3),
                 LocalDate.of(2020, 8, 7)
         );
@@ -346,12 +358,11 @@ public class FuncionarioSQL {
                 "12345678909",
                 "nina.gomes@empresa.com",
                 "senha123",
-                CargoFuncionario.HORISTA,
+                CargoFuncionario.GESTOR,
                 LocalDate.of(1996, 9, 19),
                 LocalDate.of(2021, 12, 2)
         );
 
-// OPERACIONAL
         Funcionario fOperacional1 = new Funcionario(
                 "Robson Almeida",
                 "11144477735",
@@ -372,7 +383,6 @@ public class FuncionarioSQL {
                 LocalDate.of(2019, 5, 18)
         );
 
-// COMERCIAL
         Funcionario fComercial1 = new Funcionario(
                 "Gustavo Nogueira",
                 "12345678909",
@@ -393,13 +403,12 @@ public class FuncionarioSQL {
                 LocalDate.of(2018, 3, 20)
         );
 
-// SUPORTE
         Funcionario fSuporte1 = new Funcionario(
                 "Daniel Oliveira",
                 "52998224725",
                 "daniel.oliveira@empresa.com",
                 "senha123",
-                CargoFuncionario.SUPORTE,
+                CargoFuncionario.COMERCIAL,
                 LocalDate.of(1993, 1, 11),
                 LocalDate.of(2020, 11, 5)
         );
@@ -409,12 +418,11 @@ public class FuncionarioSQL {
                 "12345678909",
                 "fabiana.pinto@empresa.com",
                 "senha123",
-                CargoFuncionario.SUPORTE,
+                CargoFuncionario.COMERCIAL,
                 LocalDate.of(1994, 5, 2),
                 LocalDate.of(2021, 7, 30)
         );
 
-// DESENVOLVIMENTO
         Funcionario fDesenv1 = new Funcionario(
                 "Thiago Araújo",
                 "11144477735",
@@ -435,13 +443,12 @@ public class FuncionarioSQL {
                 LocalDate.of(2019, 10, 9)
         );
 
-// FINANCEIRO
         Funcionario fFinanceiro1 = new Funcionario(
                 "Leonardo Pinto",
                 "12345678909",
                 "leonardo.pinto@empresa.com",
                 "senha123",
-                CargoFuncionario.FINANCEIRO,
+                CargoFuncionario.OPERACIONAL,
                 LocalDate.of(1986, 8, 1),
                 LocalDate.of(2014, 12, 11)
         );
@@ -451,7 +458,7 @@ public class FuncionarioSQL {
                 "11144477735",
                 "gisele.araujo@empresa.com",
                 "senha123",
-                CargoFuncionario.FINANCEIRO,
+                CargoFuncionario.OPERACIONAL,
                 LocalDate.of(1988, 11, 24),
                 LocalDate.of(2015, 4, 5)
         );
@@ -477,7 +484,6 @@ public class FuncionarioSQL {
                 LocalDate.of(2015, 9, 24)
         );
 
-// JURIDICO
         Funcionario fJuridico1 = new Funcionario(
                 "Marcos Oliveira",
                 "11144477735",
@@ -497,5 +503,35 @@ public class FuncionarioSQL {
                 LocalDate.of(1984, 12, 5),
                 LocalDate.of(2013, 3, 28)
         );
+
+        List<Funcionario> todosOsFuncionarios = Arrays.asList(
+                fAdmin1, fAdmin2,
+                fTecnico1, fTecnico2,
+                fTecJunior1, fTecJunior2,
+                fTecPleno1, fTecPleno2,
+                fTecSenior1, fTecSenior2,
+                fAnalista1, fAnalista2,
+                fAnalistaSenior1, fAnalistaSenior2,
+                fCoordenador1, fCoordenador2,
+                fSupervisor1, fSupervisor2,
+                fGestor1, fGestor2,
+                fGerente1, fGerente2,
+                fDiretor1, fDiretor2,
+                fEstagiario1, fEstagiario2,
+                fTrainee1, fTrainee2,
+                fTemporario1, fTemporario2,
+                fHorista1, fHorista2,
+                fOperacional1, fOperacional2,
+                fComercial1, fComercial2,
+                fSuporte1, fSuporte2,
+                fDesenv1, fDesenv2,
+                fFinanceiro1, fFinanceiro2,
+                fRh1, fRh2,
+                fJuridico1, fJuridico2,
+                victor, chico
+        );
+
+        // Agora você pode usar essa lista, por exemplo, para salvar todos no banco:
+        funcionarioService.saveAll(todosOsFuncionarios);
     }
 }
