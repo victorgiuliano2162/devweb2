@@ -2,26 +2,18 @@ package com.docker.app.entities.enums;
 
 public enum CargoFuncionario {
     ADMINISTRATIVO,
-    TECNICO,
     TECNICO_JUNIOR,
     TECNICO_PLENO,
     TECNICO_SENIOR,
     ANALISTA,
     ANALISTA_SENIOR,
-    COORDENADOR,
     SUPERVISOR,
     GESTOR,
-    GERENTE,
     DIRETOR,
     ESTAGIARIO,
-    TRAINEE,
-    TEMPORARIO,
-    HORISTA,
     OPERACIONAL,
     COMERCIAL,
-    SUPORTE,
     DESENVOLVIMENTO,
-    FINANCEIRO,
     RH,
     JURIDICO;
 }
