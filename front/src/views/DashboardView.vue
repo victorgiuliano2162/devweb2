@@ -474,8 +474,10 @@ const aplicarFiltros = async () => {
     filtrosLimpos.tipoChamado = filtros.value.tipoChamado;
   }
 
+  // Garante que o filtro ativo seja um booleano correto
   if (filtros.value.ativo !== '') {
-    filtrosLimpos.ativo = filtros.value.ativo === 'true';
+    // Converte string para boolean
+    filtrosLimpos.ativo = filtros.value.ativo === 'true' ? true : false;
   }
 
   if (filtros.value.date) {
