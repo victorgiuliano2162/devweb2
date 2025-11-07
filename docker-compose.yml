@@ -44,7 +44,7 @@ services:
     container_name: frontend
     ports:
       - "80:80"       # Acesso web principal
-      - "3000:80"     # Porta alternativa (opcional)
+      - "443:80"     # Porta alternativa (opcional)
     depends_on:
       - app          # Garante que o backend esteja rodando primeiro
     restart: unless-stopped
