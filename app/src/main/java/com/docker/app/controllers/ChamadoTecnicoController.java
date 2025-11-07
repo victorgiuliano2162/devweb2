@@ -55,7 +55,7 @@ public class ChamadoTecnicoController {
         if (ativo != null && ativo == true) {
             return chamadoTecnicoService.findByAtivoTrue(pageable);
         }
-        if (!ativo) {
+        if (ativo != null && !ativo) {
             return chamadoTecnicoService.findByAtivoFalse(pageable);
         }
 
