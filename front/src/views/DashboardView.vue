@@ -508,11 +508,16 @@ const atribuirResponsavel = () => {
   // Aqui você implementará a lógica de atribuição
 };
 
-const marcarConcluido = () => {
+const marcarConcluido = async () => {
   if (confirm('Deseja realmente marcar este ticket como concluído?')) {
-    alert('Funcionalidade de marcar como concluído em desenvolvimento!');
-    // Aqui você implementará a lógica de conclusão
-    fecharModal();
+    try {
+      await ticketStore.marcarConcluido(ticketSelecionado.value.id);
+      alert('✅ Ticket marcado como concluído com sucesso!');
+      fecharModal();
+    } catch (error) {
+      console.error('Erro ao marcar ticket como concluído:', error);
+      alert('❌ Erro ao marcar ticket como concluído. Tente novamente.');
+    }
   }
 };
 
