@@ -35,7 +35,7 @@ public class ChamadoTecnicoController {
             @RequestParam(required = false) String setor,
             @RequestParam(required = false) String funcId,
             @RequestParam(required = false) TipoChamado tipoChamado,
-            @RequestParam(required = false) Boolean ativo,
+            @RequestParam(required = false, defaultValue = "true") Boolean ativo,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             @PageableDefault(page = 0, size = 20) Pageable pageable) {
 
@@ -52,10 +52,10 @@ public class ChamadoTecnicoController {
             // supondo findByResponsavelPelaAbertura e findByResponsavelPelaExecucao aceitarem funcId
             return chamadoTecnicoService.findByResponsavelPelaAbertura(funcId, pageable);
         }
-        if (ativo != null && ativo) {
-            return chamadoTecnicoService.findByAtivoTrue(funcId, pageable);
+        if (ativo == true) {
+            return chamadoTecnicoService.findByAtivoTrue(pageable);
         }
-        if (ativo != null && !ativo) {
+        if (!ativo) {
             return chamadoTecnicoService.findByAtivoFalse(pageable);
         }
 
