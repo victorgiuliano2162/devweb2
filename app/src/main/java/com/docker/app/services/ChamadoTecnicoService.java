@@ -84,9 +84,8 @@ public class ChamadoTecnicoService {
         return chamadoTecnicoRepository.findByTipoChamado(tipoChamado, pageable);
     }
 
-    public Page<ChamadoTecnico> findByAtivoTrue(String funcionarioId, Pageable pageable) {
-        Funcionario funcionario = funcionarioService.getFuncionarioPorId(funcionarioId);
-        return chamadoTecnicoRepository.findByAtivoTrueAndResponsavelPelaExecucao(funcionario, pageable);
+    public Page<ChamadoTecnico> findByAtivoTrue(Pageable pageable) {
+        return chamadoTecnicoRepository.findByAtivoTrue(pageable);
     }
 
     public Page<ChamadoTecnico> findByAtivoFalse(Pageable pageable) {
