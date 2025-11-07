@@ -17,7 +17,7 @@ export const useTicketStore = defineStore('ticket', {
     currentPage: 0,
     totalElements: 0,
     size: 20,
-    // Filtros ativos
+    // Filtros ativos - armazena os filtros aplicados
     filtrosAtivos: {
       setor: null,
       tipoChamado: null,
@@ -47,23 +47,42 @@ export const useTicketStore = defineStore('ticket', {
     async carregarTickets(params = {}) {
       this.loading = true;
       this.error = null;
+
       try {
-        // Merge com filtros ativos
+        // Combina os filtros ativos com os parâmetros adicionais
         const filtros = {
-          page: params.page || this.currentPage,
+          page: params.page !== undefined ? params.page : this.currentPage,
           size: params.size || this.size,
-          ...this.filtrosAtivos,
-          ...params
+          sort: this.filtrosAtivos.sort || 'dataCriacao,desc'
         };
 
-        // Remove valores null/undefined
-        Object.keys(filtros).forEach(key => {
-          if (filtros[key] === null || filtros[key] === undefined || filtros[key] === '') {
-            delete filtros[key];
+        // Adiciona filtros ativos (apenas os que têm valor)
+        if (this.filtrosAtivos.setor) {
+          filtros.setor = this.filtrosAtivos.setor;
+        }
+
+        if (this.filtrosAtivos.tipoChamado) {
+          filtros.tipoChamado = this.filtrosAtivos.tipoChamado;
+        }
+
+        if (this.filtrosAtivos.ativo !== null && this.filtrosAtivos.ativo !== undefined) {
+          filtros.ativo = this.filtrosAtivos.ativo;
+        }
+
+        if (this.filtrosAtivos.funcId) {
+          filtros.funcId = this.filtrosAtivos.funcId;
+        }
+
+        if (this.filtrosAtivos.date) {
+          filtros.date = this.filtrosAtivos.date;
+        }
+
+        // Sobrescreve com params explícitos se fornecidos
+        Object.keys(params).forEach(key => {
+          if (params[key] !== undefined && params[key] !== null) {
+            filtros[key] = params[key];
           }
         });
-
-        console.log('🔍 Carregando tickets com filtros:', filtros);
 
         const response = await ticketService.buscarComFiltros(filtros);
 
@@ -73,7 +92,6 @@ export const useTicketStore = defineStore('ticket', {
         this.totalElements = response.data.totalElements || 0;
         this.size = response.data.size || 20;
 
-        console.log('✅ Tickets carregados:', this.tickets.length);
       } catch (error) {
         console.error('Erro ao carregar tickets:', error);
         this.error = 'Erro ao carregar tickets';
@@ -103,16 +121,14 @@ export const useTicketStore = defineStore('ticket', {
       this.loading = true;
       this.error = null;
       try {
-        console.log('🔄 Marcando ticket como concluído:', ticketId);
         const response = await ticketService.marcarConcluido(ticketId);
-        console.log('✅ Ticket concluído com sucesso:', response.data);
 
-        // Recarrega os tickets para atualizar a lista
+        // Recarrega os tickets mantendo os filtros atuais
         await this.carregarTickets();
 
         return response.data;
       } catch (error) {
-        console.error('❌ Erro ao marcar ticket como concluído:', error);
+        console.error('Erro ao marcar ticket como concluído:', error);
         this.error = 'Erro ao marcar ticket como concluído';
         throw error;
       } finally {
@@ -120,16 +136,22 @@ export const useTicketStore = defineStore('ticket', {
       }
     },
 
-    // Aplicar filtros
+    // Aplicar múltiplos filtros combinados
     async aplicarFiltros(filtros) {
-      this.filtrosAtivos = {
-        ...this.filtrosAtivos,
-        ...filtros
-      };
+      // Atualiza os filtros ativos mantendo os valores anteriores
+      Object.keys(filtros).forEach(key => {
+        if (filtros[key] !== undefined && filtros[key] !== null && filtros[key] !== '') {
+          this.filtrosAtivos[key] = filtros[key];
+        } else if (key in this.filtrosAtivos) {
+          this.filtrosAtivos[key] = null;
+        }
+      });
+
+      // Volta para a primeira página ao aplicar novos filtros
       await this.carregarTickets({ page: 0 });
     },
 
-    // Limpar filtros
+    // Limpar todos os filtros
     async limparFiltros() {
       this.filtrosAtivos = {
         setor: null,
@@ -142,12 +164,12 @@ export const useTicketStore = defineStore('ticket', {
       await this.carregarTickets({ page: 0 });
     },
 
-    // Mudar página
+    // Mudar página mantendo os filtros
     async mudarPagina(page) {
       await this.carregarTickets({ page });
     },
 
-    // Mudar ordenação
+    // Mudar ordenação mantendo os filtros
     async mudarOrdenacao(sort) {
       this.filtrosAtivos.sort = sort;
       await this.carregarTickets({ page: 0 });
@@ -173,7 +195,14 @@ export const useTicketStore = defineStore('ticket', {
     },
 
     temFiltrosAtivos: (state) => {
-      return Object.values(state.filtrosAtivos).some(v => v !== null && v !== 'dataCriacao,desc');
+      return (
+        state.filtrosAtivos.setor !== null ||
+        state.filtrosAtivos.tipoChamado !== null ||
+        state.filtrosAtivos.ativo !== null ||
+        state.filtrosAtivos.funcId !== null ||
+        state.filtrosAtivos.date !== null ||
+        (state.filtrosAtivos.sort && state.filtrosAtivos.sort !== 'dataCriacao,desc')
+      );
     }
   }
 });

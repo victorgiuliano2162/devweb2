@@ -68,23 +68,45 @@ export default {
     });
   },
 
-  // Buscar com filtros combinados
+  // Buscar com filtros combinados - MÉTODO PRINCIPAL
   buscarComFiltros(filtros = {}) {
-    const params = {};
+    // Monta os parâmetros de forma limpa
+    const params = {
+      page: filtros.page !== undefined ? filtros.page : 0,
+      size: filtros.size || 20
+    };
 
-    if (filtros.setor) params.setor = filtros.setor;
-    if (filtros.tipoChamado) params.tipoChamado = filtros.tipoChamado;
-    if (filtros.funcId) params.funcId = filtros.funcId;
-    if (filtros.ativo !== undefined) params.ativo = filtros.ativo;
-    if (filtros.date) params.date = filtros.date;
-    if (filtros.page !== undefined) params.page = filtros.page;
-    if (filtros.size) params.size = filtros.size;
-    if (filtros.sort) params.sort = filtros.sort;
+    // Adiciona filtros opcionais apenas se existirem
+    if (filtros.setor) {
+      params.setor = filtros.setor;
+    }
 
+    if (filtros.tipoChamado) {
+      params.tipoChamado = filtros.tipoChamado;
+    }
+
+    if (filtros.ativo !== undefined && filtros.ativo !== null && filtros.ativo !== '') {
+      params.ativo = filtros.ativo;
+    }
+
+    if (filtros.funcId) {
+      params.funcId = filtros.funcId;
+    }
+
+    if (filtros.date) {
+      params.date = filtros.date;
+    }
+
+    if (filtros.sort) {
+      params.sort = filtros.sort;
+    }
+
+    // Axios automaticamente converte o objeto params em query string
+    // Exemplo: { ativo: false, setor: 'GERENCIA' } => ?ativo=false&setor=GERENCIA
     return api.get('/tickets', { params });
   },
 
-// Marcar ticket como concluído
+  // Marcar ticket como concluído
   marcarConcluido(ticketId) {
     return api.post(`/tickets/end`, null, {
       params: { id: ticketId }

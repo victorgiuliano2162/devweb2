@@ -461,19 +461,32 @@ const formatarDataCompleta = (data) => {
   });
 };
 
-const aplicarFiltros = async () => {
-  console.log('🔍 Aplicando filtros:', filtros.value);
 
+const aplicarFiltros = async () => {
   const filtrosLimpos = {};
 
-  if (filtros.value.setor) filtrosLimpos.setor = filtros.value.setor;
-  if (filtros.value.tipoChamado) filtrosLimpos.tipoChamado = filtros.value.tipoChamado;
-  if (filtros.value.ativo !== '') filtrosLimpos.ativo = filtros.value.ativo === 'true';
-  if (filtros.value.date) filtrosLimpos.date = filtros.value.date;
-  if (filtros.value.sort) filtrosLimpos.sort = filtros.value.sort;
+  // Adiciona cada filtro apenas se tiver valor
+  if (filtros.value.setor) {
+    filtrosLimpos.setor = filtros.value.setor;
+  }
 
-  console.log('🔍 Filtros limpos:', filtrosLimpos);
+  if (filtros.value.tipoChamado) {
+    filtrosLimpos.tipoChamado = filtros.value.tipoChamado;
+  }
 
+  if (filtros.value.ativo !== '') {
+    filtrosLimpos.ativo = filtros.value.ativo === 'true';
+  }
+
+  if (filtros.value.date) {
+    filtrosLimpos.date = filtros.value.date;
+  }
+
+  if (filtros.value.sort) {
+    filtrosLimpos.sort = filtros.value.sort;
+  }
+
+  // Aplica os filtros combinados
   await ticketStore.aplicarFiltros(filtrosLimpos);
 };
 
