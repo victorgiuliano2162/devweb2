@@ -84,9 +84,11 @@ export default {
     return api.get('/tickets', { params });
   },
 
-  // Marcar ticket como concluído
+// Marcar ticket como concluído
   marcarConcluido(ticketId) {
-    return api.put(`/tickets/end?id=${ticketId}`);
+    return api.post(`/tickets/end`, null, {
+      params: { id: ticketId }
+    });
   },
 
   // ===== ENUMS E FUNCIONÁRIOS =====
