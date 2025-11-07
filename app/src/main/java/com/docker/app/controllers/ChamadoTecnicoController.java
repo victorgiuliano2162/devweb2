@@ -52,7 +52,7 @@ public class ChamadoTecnicoController {
         if (funcId != null) {
             return chamadoTecnicoService.findByResponsavelPelaAbertura(funcId, pageable);
         }
-        if (ativo == true) {
+        if (ativo != null && ativo == true) {
             return chamadoTecnicoService.findByAtivoTrue(pageable);
         }
         if (!ativo) {
