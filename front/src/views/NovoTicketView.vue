@@ -30,18 +30,6 @@
             </select>
           </div>
 
-          <!-- Contato do Responsável -->
-          <div class="form-group full-width">
-            <label for="contato">Contato do Responsável *</label>
-            <input
-              id="contato"
-              v-model="novoTicket.contatoDoResponsavelPelaAbertura"
-              type="text"
-              placeholder="Telefone ou email"
-              required
-            />
-          </div>
-
           <!-- Notas -->
           <div class="form-group full-width">
             <label for="notas">Descrição do Problema *</label>
@@ -66,25 +54,12 @@
 
         <div v-if="error" class="error-message">
           {{ error }}
-          <pre v-if="errorDetails" style="margin-top: 10px; font-size: 12px; overflow-x: auto;">{{ errorDetails }}</pre>
         </div>
 
         <div v-if="success" class="success-message">
-          Ticket criado com sucesso!
+          ✅ Ticket criado com sucesso! Redirecionando...
         </div>
       </form>
-
-      <!-- Debug Panel -->
-      <div v-if="showDebug" class="debug-panel">
-        <h3>🔍 Debug - JSON que será enviado:</h3>
-        <pre>{{ debugJSON }}</pre>
-        <div v-if="authStore.user" style="margin-top: 10px; padding: 10px; background: #e3f2fd; border-radius: 4px;">
-          <strong>👤 Usuário Logado:</strong><br>
-          ID: {{ authStore.user.id }}<br>
-          Nome: {{ authStore.user.nome }}<br>
-          Email: {{ authStore.user.email }}
-        </div>
-      </div>
     </div>
   </div>
 </template>
@@ -102,56 +77,23 @@ const authStore = useAuthStore();
 const setorSelecionado = ref('');
 const loading = ref(false);
 const error = ref('');
-const errorDetails = ref('');
 const success = ref(false);
-const showDebug = ref(true); // Mostra painel de debug
 
 const novoTicket = ref({
   tipoChamado: '',
-  contatoDoResponsavelPelaAbertura: '',
   notas: '',
 });
 
 const enums = computed(() => ticketStore.enums);
-
-// JSON formatado para debug
-const debugJSON = computed(() => {
-  if (!novoTicket.value.tipoChamado || !setorSelecionado.value) {
-    return 'Preencha o formulário para ver o JSON...';
-  }
-
-  if (!authStore.user?.id) {
-    return 'Erro: Usuário não está logado ou ID não disponível';
-  }
-
-  const ticketData = {
-    responsavelPelaAbertura: {
-      id: authStore.user.id
-    },
-    tipoChamado: novoTicket.value.tipoChamado,
-    setor: {
-      nome: setorSelecionado.value
-    },
-    notas: novoTicket.value.notas
-  };
-
-  return JSON.stringify(ticketData, null, 2);
-});
 
 onMounted(async () => {
   if (ticketStore.enums.setores.length === 0) {
     await ticketStore.carregarEnums();
   }
 
-  // Preenche o contato com o telefone do usuário logado (se existir)
-  if (authStore.user?.telefone) {
-    novoTicket.value.contatoDoResponsavelPelaAbertura = authStore.user.telefone;
-  }
-
   // Verifica se o usuário está logado
   if (!authStore.user?.id) {
     error.value = 'Erro: Usuário não está logado. Faça login novamente.';
-    console.error('❌ Usuário não autenticado');
   }
 });
 
@@ -172,7 +114,6 @@ const criarTicket = async () => {
 
   loading.value = true;
   error.value = '';
-  errorDetails.value = '';
   success.value = false;
 
   try {
@@ -187,10 +128,6 @@ const criarTicket = async () => {
       notas: novoTicket.value.notas
     };
 
-    console.log('📤 JSON que será enviado:');
-    console.log(JSON.stringify(ticketData, null, 2));
-    console.log('📤 Objeto JavaScript:', ticketData);
-
     await ticketStore.criarTicket(ticketData);
     success.value = true;
 
@@ -198,20 +135,7 @@ const criarTicket = async () => {
       router.push('/dashboard');
     }, 1500);
   } catch (err) {
-    console.error('❌ Erro completo:', err);
     error.value = 'Erro ao criar ticket. Verifique os dados e tente novamente.';
-
-    if (err.response) {
-      errorDetails.value = `Status: ${err.response.status}\n\nResposta do servidor:\n${JSON.stringify(err.response.data, null, 2)}\n\nHeaders:\n${JSON.stringify(err.response.headers, null, 2)}`;
-      console.error('📋 Status:', err.response.status);
-      console.error('📋 Dados:', err.response.data);
-      console.error('📋 Headers:', err.response.headers);
-    } else if (err.request) {
-      errorDetails.value = 'Nenhuma resposta do servidor. Verifique se o backend está rodando.';
-      console.error('📋 Request:', err.request);
-    } else {
-      errorDetails.value = err.message;
-    }
   } finally {
     loading.value = false;
   }
@@ -359,6 +283,7 @@ const voltar = () => {
   border-radius: 8px;
   font-size: 14px;
   border-left: 4px solid #c33;
+  font-weight: 600;
 }
 
 .success-message {
@@ -370,32 +295,7 @@ const voltar = () => {
   font-size: 14px;
   text-align: center;
   border-left: 4px solid #10b981;
-}
-
-.debug-panel {
-  margin-top: 32px;
-  padding: 20px;
-  background: #f8f9fa;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
-}
-
-.debug-panel h3 {
-  margin: 0 0 12px 0;
-  color: #333;
-  font-size: 16px;
-}
-
-.debug-panel pre {
-  margin: 0;
-  padding: 16px;
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  overflow-x: auto;
-  font-size: 13px;
-  line-height: 1.5;
-  color: #2d3748;
+  font-weight: 600;
 }
 
 @media (max-width: 768px) {
@@ -405,6 +305,11 @@ const voltar = () => {
 
   .form-actions {
     flex-direction: column;
+  }
+
+  .btn-cancel,
+  .btn-submit {
+    width: 100%;
   }
 }
 </style>

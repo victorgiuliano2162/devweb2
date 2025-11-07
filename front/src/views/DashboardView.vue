@@ -63,19 +63,19 @@
     <div class="filters-section">
       <h3>Filtros</h3>
       <div class="filters">
-        <!-- Setor -->
-        <select v-model="filtros.setor" @change="aplicarFiltros" class="filter-select">
-          <option value="">Todos os Setores</option>
-          <option v-for="setor in enums.setores" :key="setor" :value="setor">
-            {{ formatarEnum(setor) }}
-          </option>
-        </select>
-
-        <!-- Tipo de Chamado -->
+        <!-- Tipo de Chamado (trocado com Setor) -->
         <select v-model="filtros.tipoChamado" @change="aplicarFiltros" class="filter-select">
           <option value="">Todos os Tipos</option>
           <option v-for="tipo in enums.tipoChamado" :key="tipo" :value="tipo">
             {{ formatarEnum(tipo) }}
+          </option>
+        </select>
+
+        <!-- Setor (trocado com Tipo) -->
+        <select v-model="filtros.setor" @change="aplicarFiltros" class="filter-select">
+          <option value="">Todos os Setores</option>
+          <option v-for="setor in enums.setores" :key="setor" :value="setor">
+            {{ formatarEnum(setor) }}
           </option>
         </select>
 
@@ -118,13 +118,13 @@
 
       <!-- Indicador de filtros ativos -->
       <div v-if="temFiltrosAtivos" class="filtros-ativos">
-        <span class="badge-filtro" v-if="filtros.setor">
-          Setor: {{ formatarEnum(filtros.setor) }}
-          <button @click="removerFiltro('setor')">×</button>
-        </span>
         <span class="badge-filtro" v-if="filtros.tipoChamado">
           Tipo: {{ formatarEnum(filtros.tipoChamado) }}
           <button @click="removerFiltro('tipoChamado')">×</button>
+        </span>
+        <span class="badge-filtro" v-if="filtros.setor">
+          Setor: {{ formatarEnum(filtros.setor) }}
+          <button @click="removerFiltro('setor')">×</button>
         </span>
         <span class="badge-filtro" v-if="filtros.ativo !== ''">
           Status: {{ filtros.ativo === 'true' ? 'Abertos' : 'Concluídos' }}
@@ -149,8 +149,8 @@
         <thead>
           <tr>
             <th>ID</th>
-            <th>Tipo</th>
             <th>Setor</th>
+            <th>Tipo</th>
             <th>Responsável Abertura</th>
             <th>Responsável Execução</th>
             <th>Data Criação</th>
@@ -161,10 +161,10 @@
         <tbody>
           <tr v-for="ticket in tickets" :key="ticket.id">
             <td><span class="ticket-id">{{ ticket.id.substring(0, 8) }}</span></td>
-            <td>{{ formatarEnum(ticket.tipoChamado) }}</td>
             <td>
               <span class="badge-setor">{{ formatarEnum(ticket.setor?.nome) }}</span>
             </td>
+            <td>{{ formatarEnum(ticket.tipoChamado) }}</td>
             <td>{{ ticket.responsavelPelaAbertura?.nome || '-' }}</td>
             <td>{{ ticket.responsavelPelaExecucao?.nome || '-' }}</td>
             <td>{{ formatarData(ticket.dataCriacao) }}</td>
@@ -384,7 +384,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useTicketStore } from '@/stores/ticketStore';
 import { useAuthStore } from '@/stores/authStore';
@@ -462,6 +462,8 @@ const formatarDataCompleta = (data) => {
 };
 
 const aplicarFiltros = async () => {
+  console.log('🔍 Aplicando filtros:', filtros.value);
+
   const filtrosLimpos = {};
 
   if (filtros.value.setor) filtrosLimpos.setor = filtros.value.setor;
@@ -469,6 +471,8 @@ const aplicarFiltros = async () => {
   if (filtros.value.ativo !== '') filtrosLimpos.ativo = filtros.value.ativo === 'true';
   if (filtros.value.date) filtrosLimpos.date = filtros.value.date;
   if (filtros.value.sort) filtrosLimpos.sort = filtros.value.sort;
+
+  console.log('🔍 Filtros limpos:', filtrosLimpos);
 
   await ticketStore.aplicarFiltros(filtrosLimpos);
 };
@@ -505,14 +509,12 @@ const fecharModal = () => {
 
 const atribuirResponsavel = () => {
   alert('Funcionalidade de atribuir responsável em desenvolvimento!');
-  // Aqui você implementará a lógica de atribuição
 };
 
 const marcarConcluido = async () => {
   if (confirm('Deseja realmente marcar este ticket como concluído?')) {
     try {
       await ticketStore.marcarConcluido(ticketSelecionado.value.id);
-      alert('✅ Ticket marcado como concluído com sucesso!');
       fecharModal();
     } catch (error) {
       console.error('Erro ao marcar ticket como concluído:', error);
@@ -606,7 +608,6 @@ const logout = () => {
   align-items: center;
   justify-content: center;
   border-radius: 12px;
-  transition: transform 0.2s;
 }
 
 .stat-card.abertos .stat-icon {
@@ -939,7 +940,6 @@ const logout = () => {
   font-weight: 600;
 }
 
-/* ESTILOS DO MODAL */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -957,12 +957,8 @@ const logout = () => {
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .modal-container {
