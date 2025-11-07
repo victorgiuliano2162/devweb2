@@ -1,6 +1,7 @@
 package com.docker.app.controllers;
 
 import com.docker.app.entities.ChamadoTecnico;
+import com.docker.app.entities.enums.Setores;
 import com.docker.app.entities.enums.TipoChamado;
 import com.docker.app.repositories.ChamadoTecnicoRepository;
 import com.docker.app.services.ChamadoTecnicoService;
@@ -32,7 +33,7 @@ public class ChamadoTecnicoController {
 
     @GetMapping
     public Page<ChamadoTecnico> listarComFiltros(
-            @RequestParam(required = false) String setor,
+            @RequestParam(required = false) Setores setor,
             @RequestParam(required = false) String funcId,
             @RequestParam(required = false) TipoChamado tipoChamado,
             @RequestParam(required = false, defaultValue = "true") Boolean ativo,
