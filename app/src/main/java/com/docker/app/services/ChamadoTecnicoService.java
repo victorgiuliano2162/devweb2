@@ -69,7 +69,7 @@ public class ChamadoTecnicoService {
 
     @Transactional(readOnly = true)
     public Page<ChamadoTecnico> findBySetor(Setores setor, Pageable pageable) {
-        return chamadoTecnicoRepository.findBySetor_Nome(String.valueOf(setor), pageable);
+        return chamadoTecnicoRepository.findBySetor_Nome(setor, pageable);
     }
 
     @Transactional(readOnly = true)

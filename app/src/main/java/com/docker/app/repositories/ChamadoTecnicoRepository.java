@@ -2,6 +2,7 @@ package com.docker.app.repositories;
 
 import com.docker.app.entities.ChamadoTecnico;
 import com.docker.app.entities.Funcionario;
+import com.docker.app.entities.enums.Setores;
 import com.docker.app.entities.enums.TipoChamado;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.domain.Page;
@@ -13,7 +14,7 @@ import java.time.LocalDate;
 
 @Repository
 public interface ChamadoTecnicoRepository extends JpaRepository<ChamadoTecnico, String> {
-    Page<ChamadoTecnico> findBySetor_Nome(String setor, Pageable pageable);
+    Page<ChamadoTecnico> findBySetor_Nome(Setores setor, Pageable pageable);
     Page <ChamadoTecnico> findByResponsavelPelaAbertura(Funcionario funcionario, Pageable pageable);
     Page<ChamadoTecnico> findByResponsavelPelaExecucao(Funcionario funcionario, Pageable pageable);
     Page<ChamadoTecnico> findByTipoChamado(TipoChamado tipoChamado, Pageable pageable);
