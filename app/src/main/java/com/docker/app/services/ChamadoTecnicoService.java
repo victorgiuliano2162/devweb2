@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -29,6 +30,7 @@ public class ChamadoTecnicoService {
         this.setorService = setorService;
     }
 
+    @Transactional(readOnly = true)
     public Page<ChamadoTecnico> findAll(Pageable pageable) {
         return chamadoTecnicoRepository.findAll(PageRequest.of(0, 10));
     }
@@ -65,54 +67,66 @@ public class ChamadoTecnicoService {
     }
 
 
+    @Transactional(readOnly = true)
     public Page<ChamadoTecnico> findBySetor(String setor, Pageable pageable) {
         return chamadoTecnicoRepository.findBySetor_Nome(setor.toUpperCase(), pageable);
     }
 
+    @Transactional(readOnly = true)
     public Page<ChamadoTecnico> findByResponsavelPelaAbertura(String funcionarioId, Pageable pageable) {
         Funcionario funcionario = funcionarioService.getFuncionarioPorId(funcionarioId);
         return chamadoTecnicoRepository.findByResponsavelPelaAbertura(funcionario, pageable);
     }
 
+    @Transactional(readOnly = true)
     public Page<ChamadoTecnico> findByResponsavelPelaExecucao(String funcionarioId, Pageable pageable) {
         Funcionario funcionario = funcionarioService.getFuncionarioPorId(funcionarioId);
         return chamadoTecnicoRepository.findByResponsavelPelaExecucao(funcionario, pageable);
     }
 
+    @Transactional(readOnly = true)
     public Page<ChamadoTecnico> findByTipoChamado(TipoChamado tipoChamado, Pageable pageable) {
 
         return chamadoTecnicoRepository.findByTipoChamado(tipoChamado, pageable);
     }
 
+    @Transactional(readOnly = true)
     public Page<ChamadoTecnico> findByAtivoTrue(Pageable pageable) {
         return chamadoTecnicoRepository.findByAtivoTrue(pageable);
     }
 
+    @Transactional(readOnly = true)
     public Page<ChamadoTecnico> findByAtivoFalse(Pageable pageable) {
         return chamadoTecnicoRepository.findByAtivoFalse(pageable);
     }
 
+    @Transactional(readOnly = true)
     public Page<ChamadoTecnico> findByDataCriacaoBetween(LocalDate inicio, LocalDate fim, Pageable pageable) {
         return chamadoTecnicoRepository.findByDataCriacaoBetween(inicio, fim, pageable);
     }
 
+    @Transactional(readOnly = true)
     public Page<ChamadoTecnico> findAllByDataCriacaoBetweenAndAtivoTrue(LocalDate start, LocalDate end, Pageable pageable) {
         return chamadoTecnicoRepository.findAllByDataCriacaoBetweenAndAtivoTrue(start, end, pageable);
     }
 
+    @Transactional(readOnly = true)
     public Page<ChamadoTecnico> findAllByDataCriacaoGreaterThanEqual(LocalDate startInclusive, Pageable pageable) {
         return chamadoTecnicoRepository.findAllByDataCriacaoGreaterThanEqual(startInclusive, pageable);
     }
 
+    @Transactional(readOnly = true)
     public Page<ChamadoTecnico> findResponsavelPelaAberturaTrue(String funcionarioId, Pageable pageable) {
         Funcionario funcionario = funcionarioService.getFuncionarioPorId(funcionarioId);
         return chamadoTecnicoRepository.findByAtivoTrueAndResponsavelPelaAbertura(funcionario, pageable);
     }
 
+    @Transactional(readOnly = true)
     public Page<ChamadoTecnico> findResponsavelPelaAberturaTrue(LocalDate date, String setor, Pageable pageable) {
         return chamadoTecnicoRepository.findByDataCriacaoAndSetor_Nome(date, setor, pageable);
     }
 
+    @Transactional(readOnly = true)
     public Page<ChamadoTecnico> findResponsavelPelaAberturaPorData( String funcionarioId, LocalDate date, Pageable pageable) {
         Funcionario funcionario = funcionarioService.getFuncionarioPorId(funcionarioId);
         return chamadoTecnicoRepository.findByDataCriacaoAndResponsavelPelaExecucao(date, funcionario, pageable);
