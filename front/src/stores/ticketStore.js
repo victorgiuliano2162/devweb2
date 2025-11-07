@@ -99,6 +99,27 @@ export const useTicketStore = defineStore('ticket', {
       }
     },
 
+    async marcarConcluido(ticketId) {
+      this.loading = true;
+      this.error = null;
+      try {
+        console.log('🔄 Marcando ticket como concluído:', ticketId);
+        const response = await ticketService.marcarConcluido(ticketId);
+        console.log('✅ Ticket concluído com sucesso:', response.data);
+
+        // Recarrega os tickets para atualizar a lista
+        await this.carregarTickets();
+
+        return response.data;
+      } catch (error) {
+        console.error('❌ Erro ao marcar ticket como concluído:', error);
+        this.error = 'Erro ao marcar ticket como concluído';
+        throw error;
+      } finally {
+        this.loading = false;
+      }
+    },
+
     // Aplicar filtros
     async aplicarFiltros(filtros) {
       this.filtrosAtivos = {
