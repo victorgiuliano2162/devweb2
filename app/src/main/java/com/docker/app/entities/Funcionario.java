@@ -1,10 +1,12 @@
 package com.docker.app.entities;
 
+import com.docker.app.controllers.DTO.LoginRequest;
 import com.docker.app.entities.enums.CargoFuncionario;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
 import java.util.Date;
@@ -67,5 +69,10 @@ public class Funcionario {
 
     public void alterarCargo(CargoFuncionario cargo) {
         this.cargo = cargo;
+    }
+
+    public boolean isLoginCorrect(LoginRequest loginRequest, PasswordEncoder passwordEncoder) {
+        return passwordEncoder.matches(loginRequest.password(), this.senha);
+
     }
 }
