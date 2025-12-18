@@ -33,7 +33,8 @@ public class FuncionarioService {
     }
 
     public Funcionario getByEmail(String email) {
-        return funcionarioRepository.findByEmail(email);
+        var func = funcionarioRepository.findByEmail(email);
+        return func.get();
     }
 
     public void saveAll(List<Funcionario> funcionarios) {
