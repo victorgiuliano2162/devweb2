@@ -41,6 +41,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/login").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/enums").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/enums/setores").permitAll()
                         .anyRequest().authenticated())
                 .csrf(csrf -> csrf.disable())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
