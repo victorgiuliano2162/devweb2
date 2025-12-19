@@ -1,12 +1,14 @@
 package com.docker.app.services;
 
 
+import com.docker.app.controllers.DTO.FuncionarioResponse;
 import com.docker.app.entities.Funcionario;
 import com.docker.app.repositories.FuncionarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -47,8 +49,14 @@ public class FuncionarioService {
         funcionarioRepository.saveAll(funcionariosComSenhaCriptografada);
     }
 
-    public List<Funcionario> getAll() {
-        return funcionarioRepository.findAll();
+    public List<FuncionarioResponse> getAll() {
+        var funcionarios = funcionarioRepository.findAll();
+        List<FuncionarioResponse> funcResponse = new ArrayList<>();
+        for (Funcionario funcionario : funcionarios) {
+            var res = FuncionarioResponse.fromEntity(funcionario);
+            funcResponse.add(res);
+        }
+        return funcResponse;
     }
 
 
