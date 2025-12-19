@@ -486,31 +486,38 @@ const formatarDataCompleta = (data) => {
 const aplicarFiltros = async () => {
   const filtrosLimpos = {};
 
-  // Adiciona cada filtro apenas se tiver valor
-  if (filtros.value.setor) {
+  // Adiciona cada filtro apenas se tiver valor não-vazio
+  if (filtros.value.setor && filtros.value.setor !== '') {
     filtrosLimpos.setor = filtros.value.setor;
   }
 
-  if (filtros.value.tipoChamado) {
+  if (filtros.value.tipoChamado && filtros.value.tipoChamado !== '') {
     filtrosLimpos.tipoChamado = filtros.value.tipoChamado;
   }
 
   // Garante que o filtro ativo seja um booleano correto
-  if (filtros.value.ativo !== '') {
+  if (filtros.value.ativo !== '' && filtros.value.ativo !== null) {
     // Converte string para boolean
     filtrosLimpos.ativo = filtros.value.ativo === 'true' ? true : false;
   }
 
-  if (filtros.value.date) {
+  if (filtros.value.date && filtros.value.date !== '') {
     filtrosLimpos.date = filtros.value.date;
   }
 
-  if (filtros.value.sort) {
-    filtrosLimpos.sort = filtros.value.sort;
-  }
+  // Sempre inclui a ordenação (sort deve sempre ter um valor)
+  filtrosLimpos.sort = filtros.value.sort || 'dataCriacao,desc';
 
-  // Aplica os filtros combinados
-  await ticketStore.aplicarFiltros(filtrosLimpos);
+  // Se não houver nenhum filtro ativo (exceto sort), chama limparFiltros
+  const temFiltroAtivo = Object.keys(filtrosLimpos).some(key => key !== 'sort');
+
+  if (!temFiltroAtivo) {
+    // Se não tem nenhum filtro ativo, limpa tudo e recarrega
+    await ticketStore.limparFiltros();
+  } else {
+    // Aplica os filtros combinados
+    await ticketStore.aplicarFiltros(filtrosLimpos);
+  }
 };
 
 const limparFiltros = async () => {
