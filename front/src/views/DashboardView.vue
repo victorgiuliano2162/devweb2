@@ -397,6 +397,44 @@
       @close="fecharModalEdicao"
       @saved="salvarEdicaoTicket"
     />
+
+    <!-- MODAL DE CONFIRMAÇÃO DE CONCLUSÃO -->
+    <div v-if="modalConfirmacaoAberto" class="modal-overlay" @click="cancelarConclusao">
+      <div class="modal-confirmacao" @click.stop>
+        <div class="confirmacao-icon">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+
+        <h3>Marcar como Concluído?</h3>
+        <p>Deseja realmente marcar este ticket como concluído?</p>
+
+        <div class="ticket-info-confirmacao">
+          <div class="info-row">
+            <span class="label">ID:</span>
+            <span class="value">{{ ticketParaConcluir?.id?.substring(0, 8) }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Tipo:</span>
+            <span class="value">{{ formatarEnum(ticketParaConcluir?.tipoChamado) }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Setor:</span>
+            <span class="value">{{ formatarEnum(ticketParaConcluir?.setor?.nome) }}</span>
+          </div>
+        </div>
+
+        <div class="confirmacao-actions">
+          <button @click="cancelarConclusao" class="btn-modal-confirmacao btn-cancelar">
+            Cancelar
+          </button>
+          <button @click="confirmarConclusao" class="btn-modal-confirmacao btn-confirmar">
+            ✓ Sim, Concluir
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -425,6 +463,8 @@ const modalAberto = ref(false);
 const ticketSelecionado = ref({});
 const modalEdicaoAberto = ref(false);
 const ticketParaEditar = ref(null);
+const modalConfirmacaoAberto = ref(false);
+const ticketParaConcluir = ref(null);
 
 const tickets = computed(() => ticketStore.tickets);
 const ticketsAbertos = computed(() => ticketStore.ticketsAbertos);
@@ -569,15 +609,25 @@ const atribuirResponsavel = () => {
   alert('Funcionalidade de atribuir responsável em desenvolvimento!');
 };
 
-const marcarConcluido = async () => {
-  if (confirm('Deseja realmente marcar este ticket como concluído?')) {
-    try {
-      await ticketStore.marcarConcluido(ticketSelecionado.value.id);
-      fecharModal();
-    } catch (error) {
-      console.error('Erro ao marcar ticket como concluído:', error);
-      alert('❌ Erro ao marcar ticket como concluído. Tente novamente.');
-    }
+const marcarConcluido = () => {
+  ticketParaConcluir.value = ticketSelecionado.value;
+  modalConfirmacaoAberto.value = true;
+};
+
+const cancelarConclusao = () => {
+  modalConfirmacaoAberto.value = false;
+  ticketParaConcluir.value = null;
+};
+
+const confirmarConclusao = async () => {
+  try {
+    await ticketStore.marcarConcluido(ticketParaConcluir.value.id);
+    modalConfirmacaoAberto.value = false;
+    ticketParaConcluir.value = null;
+    fecharModal();
+  } catch (error) {
+    console.error('Erro ao marcar ticket como concluído:', error);
+    alert('❌ Erro ao marcar ticket como concluído. Tente novamente.');
   }
 };
 
@@ -1324,6 +1374,113 @@ const logout = () => {
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
 }
 
+/* Estilos do Modal de Confirmação */
+.modal-confirmacao {
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  max-width: 480px;
+  width: 100%;
+  text-align: center;
+  animation: slideUp 0.3s ease-out;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.confirmacao-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 24px;
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #065f46;
+}
+
+.modal-confirmacao h3 {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 12px;
+  font-weight: 700;
+}
+
+.modal-confirmacao > p {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 24px;
+}
+
+.ticket-info-confirmacao {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-row .label {
+  font-size: 14px;
+  color: #666;
+  font-weight: 600;
+}
+
+.info-row .value {
+  font-size: 14px;
+  color: #333;
+  font-weight: 700;
+}
+
+.confirmacao-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.btn-modal-confirmacao {
+  padding: 14px 32px;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 140px;
+}
+
+.btn-cancelar {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.btn-cancelar:hover {
+  background: #d1d5db;
+  transform: translateY(-2px);
+}
+
+.btn-confirmar {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.btn-confirmar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+}
+
 @media (max-width: 768px) {
   .filters {
     flex-direction: column;
@@ -1364,6 +1521,14 @@ const logout = () => {
   }
 
   .btn-action {
+    width: 100%;
+  }
+
+  .confirmacao-actions {
+    flex-direction: column;
+  }
+
+  .btn-modal-confirmacao {
     width: 100%;
   }
 }
