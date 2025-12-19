@@ -1,6 +1,7 @@
 package com.docker.app.controllers;
 
 
+import com.docker.app.controllers.DTO.FuncionarioResponse;
 import com.docker.app.entities.Funcionario;
 import com.docker.app.services.FuncionarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,7 @@ public class FuncionarioController {
 
     @GetMapping("/all")
     @PreAuthorize("hasAuthority('SCOPE_DIRETOR')")
-    public ResponseEntity<List<Funcionario>> listarFuncionario() {
+    public ResponseEntity<List<FuncionarioResponse>> listarFuncionario() {
         var all =  funcionarioService.getAll();
         return ResponseEntity.ok(all);
     }
