@@ -6,6 +6,8 @@ import com.docker.app.entities.Setor;
 import com.docker.app.entities.enums.Setores;
 import com.docker.app.entities.enums.TipoChamado;
 import com.docker.app.repositories.ChamadoTecnicoRepository;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +19,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Service
+@CacheConfig(cacheNames = "chamadosTecnicos")
 public class ChamadoTecnicoService {
 
     private final ChamadoTecnicoRepository chamadoTecnicoRepository;
@@ -41,6 +44,8 @@ public class ChamadoTecnicoService {
         return chamadoTecnicoRepository.findAll(PageRequest.of(0, 10));
     }
 
+    @Transactional
+    @CachePut
     public ChamadoTecnico criarChamadoTecnico(ChamadoTecnico chamadoTecnico) {
         chamadoTecnico.setAtivo(true);
 
