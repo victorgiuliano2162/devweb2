@@ -53,11 +53,15 @@ public class LoginController {
 
         var now = Instant.now();
         var expiresIn = 300L;
+
+        var cargo = funcionario.get().getCargo();
+
         var claims = JwtClaimsSet.builder()
                 .issuer("my backend hurts")
                 .subject(funcionario.get().getId())
                 .issuedAt(now)
                 .expiresAt(now.plusSeconds(expiresIn))
+                .claim("scope", "DIRETOR")
                 .build();
 
         var jwtValue = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
