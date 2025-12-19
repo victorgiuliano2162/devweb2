@@ -9,6 +9,7 @@ import com.docker.app.repositories.ChamadoTecnicoRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +29,11 @@ public class ChamadoTecnicoService {
         this.chamadoTecnicoRepository = chamadoTecnicoRepository;
         this.funcionarioService = funcionarioService;
         this.setorService = setorService;
+    }
+
+    @Transactional
+    public Page<ChamadoTecnico> findAllWithSpec(Specification<ChamadoTecnico> spec, Pageable pageable) {
+        return chamadoTecnicoRepository.findAll(spec, pageable);
     }
 
     @Transactional(readOnly = true)
