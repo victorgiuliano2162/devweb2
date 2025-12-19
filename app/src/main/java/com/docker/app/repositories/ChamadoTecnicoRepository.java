@@ -4,6 +4,7 @@ import com.docker.app.entities.ChamadoTecnico;
 import com.docker.app.entities.Funcionario;
 import com.docker.app.entities.enums.Setores;
 import com.docker.app.entities.enums.TipoChamado;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,7 +28,7 @@ public interface ChamadoTecnicoRepository extends JpaRepository<ChamadoTecnico, 
     Page<ChamadoTecnico> findAllByDataCriacaoGreaterThanEqual(LocalDate startInclusive, Pageable pageable);
     Page<ChamadoTecnico> findByDataCriacaoAndSetor_Nome(LocalDate dataCriacao, String setor, Pageable pageable);
     Page<ChamadoTecnico> findByDataCriacaoAndResponsavelPelaExecucao(LocalDate dataCriacao, Funcionario funcionario, Pageable pageable);
-
+    Page<ChamadoTecnico> findAll(Specification<ChamadoTecnico> spec, Pageable pageable);
 
 
 
