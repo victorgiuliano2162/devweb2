@@ -24,7 +24,7 @@
           <label for="password">Senha</label>
           <input
             id="password"
-            v-model="credentials.senha"
+            v-model="credentials.password"
             type="password"
             placeholder="••••••••"
             required
@@ -55,7 +55,7 @@ const authStore = useAuthStore();
 
 const credentials = ref({
   email: '',
-  senha: ''
+  password: ''
 });
 
 const loading = ref(false);
@@ -66,37 +66,43 @@ const handleLogin = async () => {
   error.value = '';
 
   try {
-    const payload = {
-      email: credentials.value.email.trim(),
-      senha: credentials.value.senha
-    };
-
     const response = await ticketService.login(
-      payload.email,
-      payload.senha
+      credentials.value.email.trim(),
+      credentials.value.password
     );
 
-    const funcionario = response.data;
+    console.log('✅ Resposta completa do login:', response.data);
 
+    const { accessToken, funcionario } = response.data;
+
+    if (!accessToken) {
+      throw new Error('Token não recebido do servidor');
+    }
+
+    // IMPORTANTE: Salva TODOS os campos do funcionário, incluindo cargo
     const userData = {
       id: funcionario.id,
+      registro: funcionario.registro,
       nome: funcionario.nome,
       email: funcionario.email,
-      cargo: funcionario.cargo,
-      cpf: funcionario.cpf,
       telefone: funcionario.telefone,
-      dataNascimento: funcionario.dataNascimento,
-      dataContratacao: funcionario.dataContratacao
+      cargo: funcionario.cargo  // ← ESTE CAMPO É ESSENCIAL
     };
 
-    const token = 'token-' + Date.now() + '-' + funcionario.id;
+    console.log('👤 Dados do usuário a serem salvos:', userData);
+    console.log('🔑 Cargo do usuário:', userData.cargo);
 
-    authStore.login(userData, token);
+    authStore.login(userData, accessToken);
+
+    console.log('✅ Login bem-sucedido! Redirecionando...');
+
     router.push('/dashboard');
 
   } catch (err) {
+    console.error('❌ Erro no login:', err);
+
     if (err.response) {
-      if (err.response.status === 401) {
+      if (err.response.status === 401 || err.response.status === 403) {
         error.value = 'Email ou senha inválidos.';
       } else if (err.response.status === 404) {
         error.value = 'Serviço indisponível. Tente novamente mais tarde.';
@@ -108,7 +114,7 @@ const handleLogin = async () => {
     } else if (err.request) {
       error.value = 'Não foi possível conectar ao servidor. Verifique sua conexão.';
     } else {
-      error.value = 'Erro inesperado. Tente novamente.';
+      error.value = err.message || 'Erro inesperado. Tente novamente.';
     }
   } finally {
     loading.value = false;
@@ -253,26 +259,6 @@ const handleLogin = async () => {
   75% { transform: translateX(10px); }
 }
 
-.register-link {
-  text-align: center;
-  color: #666;
-  font-size: 14px;
-  padding-top: 16px;
-  border-top: 1px solid #e0e0e0;
-}
-
-.register-link a {
-  color: #667eea;
-  text-decoration: none;
-  font-weight: 600;
-  transition: color 0.2s;
-}
-
-.register-link a:hover {
-  color: #764ba2;
-  text-decoration: underline;
-}
-
 @media (max-width: 480px) {
   .login-card {
     padding: 30px 20px;
@@ -286,5 +272,4 @@ const handleLogin = async () => {
     font-size: 24px;
   }
 }
-
 </style>

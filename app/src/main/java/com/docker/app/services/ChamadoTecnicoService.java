@@ -77,6 +77,47 @@ public class ChamadoTecnicoService {
         return chamadoTecnicoRepository.save(chamadoTecnico);
     }
 
+    @Transactional
+    public ChamadoTecnico atualizarChamadoTecnico(ChamadoTecnico chamadoAtualizado) {
+        System.out.println("🔍 Buscando ticket existente ID: " + chamadoAtualizado.getId());
+
+        ChamadoTecnico chamadoExistente = chamadoTecnicoRepository.findById(chamadoAtualizado.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Ticket não encontrado"));
+
+        System.out.println("✅ Ticket encontrado. Atualizando dados...");
+
+        if (chamadoAtualizado.getTipoChamado() != null) {
+            chamadoExistente.setTipoChamado(chamadoAtualizado.getTipoChamado());
+        }
+
+        if (chamadoAtualizado.getSetor() != null) {
+            Setores nomeSetor = chamadoAtualizado.getSetor().getNome();
+            Setor setorPersistente = setorService.findByNome(nomeSetor);
+            chamadoExistente.setSetor(setorPersistente);
+        }
+
+        if (chamadoAtualizado.getResponsavelPelaExecucao() != null) {
+            String execId = chamadoAtualizado.getResponsavelPelaExecucao().getId();
+            Funcionario responsavelExecucao = funcionarioService.getFuncionarioPorId(execId);
+            chamadoExistente.setResponsavelPelaExecucao(responsavelExecucao);
+            System.out.println("👤 Responsável pela execução atribuído: " + responsavelExecucao.getNome());
+        } else {
+            chamadoExistente.setResponsavelPelaExecucao(null);
+            System.out.println("🚫 Responsável pela execução removido");
+        }
+
+        if (chamadoAtualizado.getNotas() != null) {
+            chamadoExistente.setNotas(chamadoAtualizado.getNotas());
+        }
+
+        chamadoExistente.setDataAtualizacao(LocalDateTime.now());
+
+        System.out.println("💾 Salvando ticket atualizado...");
+        ChamadoTecnico ticketSalvo = chamadoTecnicoRepository.save(chamadoExistente);
+        System.out.println("✅ Ticket atualizado com sucesso!");
+
+        return ticketSalvo;
+    }
 
     @Transactional(readOnly = true)
     public Page<ChamadoTecnico> findBySetor(Setores setor, Pageable pageable) {

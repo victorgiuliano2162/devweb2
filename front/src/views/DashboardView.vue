@@ -174,7 +174,16 @@
               </span>
             </td>
             <td>
-              <button @click="verDetalhes(ticket)" class="btn-action">Ver</button>
+              <div class="action-buttons">
+                <button @click="verDetalhes(ticket)" class="btn-action btn-view">Ver</button>
+                <button
+                  v-if="podeEditarTickets"
+                  @click="abrirModalEdicao(ticket)"
+                  class="btn-action btn-edit"
+                >
+                   Editar
+                </button>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -380,6 +389,14 @@
         </div>
       </div>
     </div>
+
+    <!-- MODAL DE EDIÇÃO -->
+    <ModalEditarTicket
+      v-if="modalEdicaoAberto"
+      :ticket="ticketParaEditar"
+      @close="fecharModalEdicao"
+      @saved="salvarEdicaoTicket"
+    />
   </div>
 </template>
 
@@ -388,10 +405,13 @@ import { ref, computed, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useTicketStore } from '@/stores/ticketStore';
 import { useAuthStore } from '@/stores/authStore';
+import { usePermissions } from '@/composables/usePermissions';
+import ModalEditarTicket from '@/components/ModalEditarTicket.vue';
 
 const router = useRouter();
 const ticketStore = useTicketStore();
 const authStore = useAuthStore();
+const { podeEditarTickets } = usePermissions();
 
 const filtros = ref({
   setor: '',
@@ -403,6 +423,8 @@ const filtros = ref({
 
 const modalAberto = ref(false);
 const ticketSelecionado = ref({});
+const modalEdicaoAberto = ref(false);
+const ticketParaEditar = ref(null);
 
 const tickets = computed(() => ticketStore.tickets);
 const ticketsAbertos = computed(() => ticketStore.ticketsAbertos);
@@ -460,7 +482,6 @@ const formatarDataCompleta = (data) => {
     minute: '2-digit'
   });
 };
-
 
 const aplicarFiltros = async () => {
   const filtrosLimpos = {};
@@ -520,6 +541,21 @@ const verDetalhes = (ticket) => {
 const fecharModal = () => {
   modalAberto.value = false;
   ticketSelecionado.value = {};
+};
+
+const abrirModalEdicao = (ticket) => {
+  ticketParaEditar.value = { ...ticket };
+  modalEdicaoAberto.value = true;
+};
+
+const fecharModalEdicao = () => {
+  modalEdicaoAberto.value = false;
+  ticketParaEditar.value = null;
+};
+
+const salvarEdicaoTicket = async () => {
+  fecharModalEdicao();
+  await ticketStore.carregarTickets();
 };
 
 const atribuirResponsavel = () => {
@@ -859,19 +895,43 @@ const logout = () => {
   color: #065f46;
 }
 
-.btn-action {
-  padding: 6px 16px;
-  background: #3b82f6;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 13px;
-  transition: all 0.2s;
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
-.btn-action:hover {
+.btn-action {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-action.btn-view {
+  background: #3b82f6;
+  color: white;
+}
+
+.btn-action.btn-view:hover {
   background: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.btn-action.btn-edit {
+  background: #f59e0b;
+  color: white;
+}
+
+.btn-action.btn-edit:hover {
+  background: #d97706;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
 }
 
 .no-data {
@@ -1289,6 +1349,15 @@ const logout = () => {
 
   .modal-container {
     max-height: 95vh;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btn-action {
+    width: 100%;
   }
 }
 </style>
