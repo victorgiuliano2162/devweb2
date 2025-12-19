@@ -48,17 +48,6 @@ O projeto segue uma arquitetura cliente-servidor clássica:
 - Listagem e filtragem avançada de chamados
 - Cache de consultas frequentes para melhor performance
 
-## Como Executar o Projeto
 
 ### Pré-requisitos
-- Java 17
-- Node.js (para o frontend)
-- PostgreSQL
-- Maven ou Gradle
-
-### Backend
-1. Clone o repositório
-2. Configure o banco de dados no `application.yml` ou `application.properties`
-3. Execute:
-   ```bash
-   ./mvnw spring-boot:run
+- Docker Compose
