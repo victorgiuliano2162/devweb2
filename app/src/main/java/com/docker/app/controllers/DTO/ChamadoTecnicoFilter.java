@@ -9,7 +9,7 @@ import java.time.LocalDate;
 @Data
 public class ChamadoTecnicoFilter {
     private Setores setor;
-    private String funcId;
+    private String id;
     private TipoChamado tipoChamado;
     private Boolean ativo;
     private LocalDate date;
